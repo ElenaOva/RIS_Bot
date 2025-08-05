@@ -415,6 +415,7 @@ def delete_some_messages(argument):
 
 @bot.message_handler(commands=['start', ])
 def start(message: telebot.types.Message):
+    print('ПРИШЛИ В СТАРТ')
     if message.chat.type == 'private':
         username = message.from_user.username
         markup = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
