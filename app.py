@@ -71,7 +71,7 @@ def get_announcements(argument):
     cursor = conn.cursor()
     cursor.execute(
         'SELECT game_announcement.name, game_announcement.announcement FROM game_announcement WHERE status=%s',
-        (argument,))
+        (argument, ))
     announcements = cursor.fetchall()
     conn.close()
 
@@ -269,7 +269,7 @@ def add_announcement(data, name):
     conn = psycopg2.connect(DATABASE_URL)
     cursor = conn.cursor()
     cursor.execute(
-        f'INSERT INTO game_announcement (announcement, name) VALUES (%s, %s)', (data, name))
+        f'INSERT INTO game_announcement (announcement, name) VALUES (%s, %s)', (data, name, ))
     conn.commit()
     conn.close()
 
@@ -289,7 +289,7 @@ def delete_announcement():
         conn = psycopg2.connect(DATABASE_URL)
         cursor = conn.cursor()
         cursor.execute(
-            'DELETE FROM game_announcement WHERE id=%s ', (actual_id,))
+            'DELETE FROM game_announcement WHERE id=%s', (actual_id, ))
         conn.commit()
         conn.close()
 
@@ -298,15 +298,14 @@ def add_history(data, name, status):
     if status == 'anonymous':
         conn = psycopg2.connect(DATABASE_URL)
         cursor = conn.cursor()
-        cursor.execute(
-            f'INSERT INTO history (text, author) VALUES ("{data}", "автор пожелал остаться анонимным 😌")')
+        cursor.execute('INSERT INTO history (text, author) VALUES (%s, %s)',
+                       (data, "автор пожелал остаться анонимным 😌"))
         conn.commit()
         conn.close()
     else:
         conn = psycopg2.connect(DATABASE_URL)
         cursor = conn.cursor()
-        cursor.execute(
-            f'INSERT INTO history (text, author) VALUES ("{data}", "{name}")')
+        cursor.execute('INSERT INTO history (text, author) VALUES (%s, %s)', (data, name, ))
         conn.commit()
         conn.close()
 
@@ -326,7 +325,7 @@ def delete_history():
         conn = psycopg2.connect(DATABASE_URL)
         cursor = conn.cursor()
         cursor.execute(
-            'DELETE FROM history WHERE id=%s ', (actual_id,))
+            'DELETE FROM history WHERE id=%s ', (actual_id, ))
         conn.commit()
         conn.close()
 
@@ -335,15 +334,14 @@ def add_idea(data, name, status):
     if status == 'anonymous':
         conn = psycopg2.connect(DATABASE_URL)
         cursor = conn.cursor()
-        cursor.execute(
-            f'INSERT INTO ideas (idea, author) VALUES ("{data}", "автор пожелал остаться анонимным 😌")')
+        cursor.execute('INSERT INTO ideas (idea, author) VALUES (%s, %s)',
+                       (data, "автор пожелал остаться анонимным 😌"))
         conn.commit()
         conn.close()
     else:
         conn = psycopg2.connect(DATABASE_URL)
         cursor = conn.cursor()
-        cursor.execute(
-            f'INSERT INTO ideas (idea, author) VALUES ("{data}", "{name}")')
+        cursor.execute('INSERT INTO ideas (idea, author) VALUES (%s, %s)', (data, name))
         conn.commit()
         conn.close()
 
@@ -363,18 +361,12 @@ def delete_idea():
         conn = psycopg2.connect(DATABASE_URL)
         cursor = conn.cursor()
         cursor.execute(
-            'DELETE FROM ideas WHERE id=%s', (actual_id,))
+            'DELETE FROM ideas WHERE id=%s', (actual_id, ))
         conn.commit()
         conn.close()
 
 
 def add_meme(data, author):
-    # photo = message.photo[-1]  # Берем изображение с наибольшим разрешением
-    # add_inf_masters(photo.file_id, 'photo', username)
-    # back_to_master_short_schedule(message)
-
-    # photo = message.photo[-1]
-    # add_meme(photo.file_id, username)
     conn = psycopg2.connect(DATABASE_URL)
     cursor = conn.cursor()
     cursor.execute('INSERT INTO memes (meme, author) VALUES (%s, %s)', (data, author))
@@ -411,15 +403,14 @@ def delete_all_messages():
 def delete_some_messages(argument):
     conn = psycopg2.connect(DATABASE_URL)
     cursor = conn.cursor()
-    cursor.execute(f'SELECT id FROM {argument}')
+    cursor.execute('SELECT id FROM %s', (argument, ))
     list_id = cursor.fetchall()
     conn.close()
 
     if len(list_id) != 0:
         conn = psycopg2.connect(DATABASE_URL)
         cursor = conn.cursor()
-        cursor.execute(
-            f'DELETE FROM {argument} WHERE status=1')
+        cursor.execute('DELETE FROM %s WHERE status=1', (argument, ))
         conn.commit()
         conn.close()
 
