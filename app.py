@@ -10,24 +10,47 @@ import os
 from flask import Flask, request
 # from flask import Flask, request
 
-app = Flask(__name__)
+# app = Flask(__name__)
+# TOKEN = os.getenv("BOT_TOKEN")
+# bot = telebot.TeleBot(TOKEN)
+# print("BOT_TOKEN:", TOKEN)
+#
+# DATABASE_URL = os.getenv("DATABASE_URL")
+#
+# WEBHOOK_PATH = f"/{TOKEN}"
+# # WEBHOOK_URL = f"risbot-production.up.railway.app{WEBHOOK_PATH}"
+# WEBHOOK_URL = f"https://risbot-production.up.railway.app{WEBHOOK_PATH}"
+
+
 TOKEN = os.getenv("BOT_TOKEN")
+WEBHOOK_URL = f"https://risbot-production.up.railway.app/{TOKEN}"
+
 bot = telebot.TeleBot(TOKEN)
 print("BOT_TOKEN:", TOKEN)
 
 DATABASE_URL = os.getenv("DATABASE_URL")
 
-WEBHOOK_PATH = f"/{TOKEN}"
+
 # WEBHOOK_URL = f"risbot-production.up.railway.app{WEBHOOK_PATH}"
-WEBHOOK_URL = f"https://risbot-production.up.railway.app{WEBHOOK_PATH}"
 
 
-@app.route(WEBHOOK_PATH, methods=['POST'])
-def webhook():
-    json_str = request.get_data().decode('utf-8')
-    update = telebot.types.Update.de_json(json_str)
-    bot.process_new_updates([update])
-    return '', 200
+app = Flask(__name__)
+
+
+# @app.route(f'/{TOKEN}', methods=['POST'])
+# def webhook():
+#     json_str = request.get_data().decode('utf-8')
+#     update = telebot.types.Update.de_json(json_str)
+#     bot.process_new_updates([update])
+#     return '', 200
+
+
+# @app.route(WEBHOOK_PATH, methods=['POST'])
+# def webhook():
+#     json_str = request.get_data().decode('utf-8')
+#     update = telebot.types.Update.de_json(json_str)
+#     bot.process_new_updates([update])
+#     return '', 200
 
 
 class ConvertionException(Exception):
@@ -1450,6 +1473,14 @@ def finally_send_idea(message):
                                   '\nВыбери один из этих вариантов, что делать с твоими идеями '
                                   ':)'.format(message.from_user), reply_markup=markup)
             bot.register_next_step_handler(message, finally_send_idea)
+
+
+@app.route(f'/{TOKEN}', methods=['POST'])
+def webhook():
+    json_str = request.get_data().decode('utf-8')
+    update = telebot.types.Update.de_json(json_str)
+    bot.process_new_updates([update])
+    return '', 200
 
 
 if __name__ == "__main__":
