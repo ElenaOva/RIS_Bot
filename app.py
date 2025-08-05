@@ -18,7 +18,8 @@ print("BOT_TOKEN:", TOKEN)
 DATABASE_URL = os.getenv("DATABASE_URL")
 
 WEBHOOK_PATH = f"/{TOKEN}"
-WEBHOOK_URL = f"https://risbot-production.up.railway.app{WEBHOOK_PATH}"
+WEBHOOK_URL = f"risbot-production.up.railway.app{WEBHOOK_PATH}"
+# WEBHOOK_URL = f"https://risbot-production.up.railway.app{WEBHOOK_PATH}"
 
 
 @app.route(WEBHOOK_PATH, methods=['POST'])
