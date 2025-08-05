@@ -3,3 +3,4 @@ gunicorn
 pyTelegramBotAPI
 requests
 psycopg2-binary
+telebot

@@ -10,8 +10,6 @@ import os
 from flask import Flask, request
 
 
-app = Flask(__name__)
-
 TOKEN = os.getenv("BOT_TOKEN")
 bot = telebot.TeleBot(TOKEN)
 print("BOT_TOKEN:", TOKEN)
@@ -19,16 +17,9 @@ print("BOT_TOKEN:", TOKEN)
 DATABASE_URL = os.getenv("DATABASE_URL")
 
 WEBHOOK_PATH = f"/{TOKEN}"
-# WEBHOOK_URL = f"risbot-production.up.railway.app{WEBHOOK_PATH}"
 WEBHOOK_URL = f"https://risbot-production.up.railway.app{WEBHOOK_PATH}"
 
-
-# TOKEN = os.getenv("BOT_TOKEN")
-# WEBHOOK_URL = f"https://risbot-production.up.railway.app/{TOKEN}"
-# bot = telebot.TeleBot(TOKEN)
-# print("BOT_TOKEN:", TOKEN)
-# DATABASE_URL = os.getenv("DATABASE_URL")
-# app = Flask(__name__)
+app = Flask(__name__)
 
 
 @app.route(WEBHOOK_PATH, methods=['POST'])
@@ -1478,5 +1469,8 @@ def finally_send_idea(message):
 
 
 if __name__ == "__main__":
+    bot.remove_webhook()
+    bot.set_webhook(url=WEBHOOK_URL)
+
     port = int(os.environ.get("PORT", 8080))
     app.run(host="0.0.0.0", port=port)
