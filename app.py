@@ -1452,6 +1452,7 @@ def finally_send_idea(message):
 
 
 if __name__ == "__main__":
+    print('ЗАПУСТИЛИ БОТА')
     bot.remove_webhook()
     success = bot.set_webhook(url=WEBHOOK_URL)
     print("Webhook set result:", success)  # <-- Вот сюда Telegram вернет True/False
@@ -1459,4 +1460,6 @@ if __name__ == "__main__":
 
     port = int(os.environ.get("PORT", 8080))
     app.run(host="0.0.0.0", port=port)
-
+# if __name__ == "__main__":
+#     port = int(os.environ.get("PORT", 8080))
+#     app.run(host="0.0.0.0", port=port)
