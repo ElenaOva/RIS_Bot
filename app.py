@@ -2,7 +2,7 @@ import telebot
 import random
 import requests
 import json
-import sqlite3
+# import sqlite3
 import psycopg2
 import urllib.parse
 import telebot
@@ -11,26 +11,26 @@ import os
 from flask import Flask, request
 # from flask import Flask, request
 
-# app = Flask(__name__)
-# TOKEN = os.getenv("BOT_TOKEN")
-# bot = telebot.TeleBot(TOKEN)
-#
-# DATABASE_URL = os.getenv("DATABASE_URL")
-#
-# WEBHOOK_PATH = f"/{TOKEN}"
-# WEBHOOK_URL = f"https://worker-production-4757.up.railway.app{WEBHOOK_PATH}"
-#
-#
-# @app.route(WEBHOOK_PATH, methods=['POST'])
-# def webhook():
-#     json_str = request.get_data().decode('utf-8')
-#     update = telebot.types.Update.de_json(json_str)
-#     bot.process_new_updates([update])
-#     return '', 200
-
-
-TOKEN = '8112386542:AAFpPY0R7SzzbvSliVd4TKIbZK723U8IMjM'
+app = Flask(__name__)
+TOKEN = os.getenv("BOT_TOKEN")
 bot = telebot.TeleBot(TOKEN)
+
+DATABASE_URL = os.getenv("DATABASE_URL")
+
+WEBHOOK_PATH = f"/{TOKEN}"
+WEBHOOK_URL = f"https://worker-production-4757.up.railway.app{WEBHOOK_PATH}"
+
+
+@app.route(WEBHOOK_PATH, methods=['POST'])
+def webhook():
+    json_str = request.get_data().decode('utf-8')
+    update = telebot.types.Update.de_json(json_str)
+    bot.process_new_updates([update])
+    return '', 200
+
+
+# TOKEN = '8112386542:AAFpPY0R7SzzbvSliVd4TKIbZK723U8IMjM'
+# bot = telebot.TeleBot(TOKEN)
 
 
 class ConvertionException(Exception):
@@ -42,7 +42,7 @@ class MyCustomException(Exception):
 
 
 def get_admins():
-    conn = sqlite3.connect('database/database1.db', check_same_thread=False)
+    conn = psycopg2.connect(DATABASE_URL)
     cursor = conn.cursor()
     cursor.execute(
         'SELECT administrators.name FROM administrators')
@@ -53,7 +53,7 @@ def get_admins():
 
 
 def get_example_meme():
-    conn = sqlite3.connect('database/database1.db', check_same_thread=False)
+    conn = psycopg2.connect(DATABASE_URL)
     cursor = conn.cursor()
     cursor.execute(
         'SELECT photo FROM example_meme')
@@ -64,10 +64,10 @@ def get_example_meme():
 
 
 def get_announcements(argument):
-    conn = sqlite3.connect('database/database1.db', check_same_thread=False)
+    conn = psycopg2.connect(DATABASE_URL)
     cursor = conn.cursor()
     cursor.execute(
-        'SELECT game_announcement.name, game_announcement.announcement FROM game_announcement WHERE status=?',
+        'SELECT game_announcement.name, game_announcement.announcement FROM game_announcement WHERE status=%s',
         (argument,))
     announcements = cursor.fetchall()
     conn.close()
@@ -83,10 +83,10 @@ def get_announcements(argument):
                 new_text = f'Мастер: @{master}\n{text_announcement}'
                 result.append(new_text)
 
-            conn = sqlite3.connect('database/database1.db', check_same_thread=False)
+            conn = psycopg2.connect(DATABASE_URL)
             cursor = conn.cursor()
             cursor.execute(
-                'UPDATE game_announcement SET status=? WHERE status=?',
+                'UPDATE game_announcement SET status=%s WHERE status=%s',
                 (True, False,))
             conn.commit()
             conn.close()
@@ -106,10 +106,10 @@ def get_announcements(argument):
 
 
 def get_stories(argument):
-    conn = sqlite3.connect('database/database1.db', check_same_thread=False)
+    conn = psycopg2.connect(DATABASE_URL)
     cursor = conn.cursor()
     cursor.execute(
-        'SELECT history.author, history.text FROM history WHERE status=?',
+        'SELECT history.author, history.text FROM history WHERE status=%s',
         (argument, ))
     stories = cursor.fetchall()
     conn.close()
@@ -128,10 +128,10 @@ def get_stories(argument):
                 else:
                     new_text = f'Автор: {author}\n{text_story}'
                     result.append(new_text)
-            conn = sqlite3.connect('database/database1.db', check_same_thread=False)
+            conn = psycopg2.connect(DATABASE_URL)
             cursor = conn.cursor()
             cursor.execute(
-                'UPDATE history SET status=? WHERE status=?',
+                'UPDATE history SET status=%s WHERE status=%s',
                 (True, False,))
             conn.commit()
             conn.close()
@@ -155,10 +155,10 @@ def get_stories(argument):
 
 
 def get_ideas(argument):
-    conn = sqlite3.connect('database/database1.db', check_same_thread=False)
+    conn = psycopg2.connect(DATABASE_URL)
     cursor = conn.cursor()
     cursor.execute(
-        'SELECT ideas.author, ideas.idea FROM ideas WHERE status=?',
+        'SELECT ideas.author, ideas.idea FROM ideas WHERE status=%s',
         (argument, ))
     ideas = cursor.fetchall()
     conn.close()
@@ -177,10 +177,10 @@ def get_ideas(argument):
                 else:
                     new_text = f'Автор: {author}\n{text_idea}'
                     result.append(new_text)
-            conn = sqlite3.connect('database/database1.db', check_same_thread=False)
+            conn = psycopg2.connect(DATABASE_URL)
             cursor = conn.cursor()
             cursor.execute(
-                'UPDATE ideas SET status=? WHERE status=?',
+                'UPDATE ideas SET status=%s WHERE status=%s',
                 (True, False,))
             conn.commit()
             conn.close()
@@ -204,10 +204,10 @@ def get_ideas(argument):
 
 
 def get_memes(argument):
-    conn = sqlite3.connect('database/database1.db', check_same_thread=False)
+    conn = psycopg2.connect(DATABASE_URL)
     cursor = conn.cursor()
     cursor.execute(
-        'SELECT memes.author, memes.meme FROM memes WHERE status=?',
+        'SELECT memes.author, memes.meme FROM memes WHERE status=%s',
         (argument, ))
     memes = cursor.fetchall()
     conn.close()
@@ -231,10 +231,10 @@ def get_memes(argument):
                     new_list.append(new_text)
                     new_list.append(photo)
                     result.append(new_list)
-            conn = sqlite3.connect('database/database1.db', check_same_thread=False)
+            conn = psycopg2.connect(DATABASE_URL)
             cursor = conn.cursor()
             cursor.execute(
-                'UPDATE memes SET status=? WHERE status=?',
+                'UPDATE memes SET status=%s WHERE status=%s',
                 (True, False,))
             conn.commit()
             conn.close()
@@ -263,16 +263,16 @@ def get_memes(argument):
 
 
 def add_announcement(data, name):
-    conn = sqlite3.connect('database/database1.db', check_same_thread=False)
+    conn = psycopg2.connect(DATABASE_URL)
     cursor = conn.cursor()
     cursor.execute(
-        f'INSERT INTO game_announcement (announcement, name) VALUES ("{data}", "{name}")')
+        f'INSERT INTO game_announcement (announcement, name) VALUES (%s, %s)', (data, name))
     conn.commit()
     conn.close()
 
 
 def delete_announcement():
-    conn = sqlite3.connect('database/database1.db', check_same_thread=False)
+    conn = psycopg2.connect(DATABASE_URL)
     cursor = conn.cursor()
     cursor.execute('SELECT id FROM game_announcement')
     list_id = cursor.fetchall()
@@ -283,24 +283,24 @@ def delete_announcement():
         list_id.sort()
         actual_id = list_id[-1]
 
-        conn = sqlite3.connect('database/database1.db', check_same_thread=False)
+        conn = psycopg2.connect(DATABASE_URL)
         cursor = conn.cursor()
         cursor.execute(
-            'DELETE FROM game_announcement WHERE id=? ', (actual_id,))
+            'DELETE FROM game_announcement WHERE id=%s ', (actual_id,))
         conn.commit()
         conn.close()
 
 
 def add_history(data, name, status):
     if status == 'anonymous':
-        conn = sqlite3.connect('database/database1.db', check_same_thread=False)
+        conn = psycopg2.connect(DATABASE_URL)
         cursor = conn.cursor()
         cursor.execute(
             f'INSERT INTO history (text, author) VALUES ("{data}", "автор пожелал остаться анонимным 😌")')
         conn.commit()
         conn.close()
     else:
-        conn = sqlite3.connect('database/database1.db', check_same_thread=False)
+        conn = psycopg2.connect(DATABASE_URL)
         cursor = conn.cursor()
         cursor.execute(
             f'INSERT INTO history (text, author) VALUES ("{data}", "{name}")')
@@ -309,7 +309,7 @@ def add_history(data, name, status):
 
 
 def delete_history():
-    conn = sqlite3.connect('database/database1.db', check_same_thread=False)
+    conn = psycopg2.connect(DATABASE_URL)
     cursor = conn.cursor()
     cursor.execute('SELECT id FROM history')
     list_id = cursor.fetchall()
@@ -320,24 +320,24 @@ def delete_history():
         list_id.sort()
         actual_id = list_id[-1]
 
-        conn = sqlite3.connect('database/database1.db', check_same_thread=False)
+        conn = psycopg2.connect(DATABASE_URL)
         cursor = conn.cursor()
         cursor.execute(
-            'DELETE FROM history WHERE id=? ', (actual_id,))
+            'DELETE FROM history WHERE id=%s ', (actual_id,))
         conn.commit()
         conn.close()
 
 
 def add_idea(data, name, status):
     if status == 'anonymous':
-        conn = sqlite3.connect('database/database1.db', check_same_thread=False)
+        conn = psycopg2.connect(DATABASE_URL)
         cursor = conn.cursor()
         cursor.execute(
             f'INSERT INTO ideas (idea, author) VALUES ("{data}", "автор пожелал остаться анонимным 😌")')
         conn.commit()
         conn.close()
     else:
-        conn = sqlite3.connect('database/database1.db', check_same_thread=False)
+        conn = psycopg2.connect(DATABASE_URL)
         cursor = conn.cursor()
         cursor.execute(
             f'INSERT INTO ideas (idea, author) VALUES ("{data}", "{name}")')
@@ -346,7 +346,7 @@ def add_idea(data, name, status):
 
 
 def delete_idea():
-    conn = sqlite3.connect('database/database1.db', check_same_thread=False)
+    conn = psycopg2.connect(DATABASE_URL)
     cursor = conn.cursor()
     cursor.execute('SELECT id FROM ideas')
     list_id = cursor.fetchall()
@@ -357,16 +357,16 @@ def delete_idea():
         list_id.sort()
         actual_id = list_id[-1]
 
-        conn = sqlite3.connect('database/database1.db', check_same_thread=False)
+        conn = psycopg2.connect(DATABASE_URL)
         cursor = conn.cursor()
         cursor.execute(
-            'DELETE FROM ideas WHERE id=? ', (actual_id,))
+            'DELETE FROM ideas WHERE id=%s', (actual_id,))
         conn.commit()
         conn.close()
 
 
 def add_meme(data, author):
-    conn = sqlite3.connect('database/database1.db', check_same_thread=False)
+    conn = psycopg2.connect(DATABASE_URL)
     cursor = conn.cursor()
     cursor.execute(
         f'INSERT INTO memes (meme, author) VALUES ("{data}", "{author}")')
@@ -375,25 +375,25 @@ def add_meme(data, author):
 
 
 def delete_all_messages():
-    conn = sqlite3.connect('database/database1.db', check_same_thread=False)
+    conn = psycopg2.connect(DATABASE_URL)
     cursor = conn.cursor()
     cursor.execute('DELETE FROM game_announcement WHERE status=1')
     conn.commit()
     conn.close()
 
-    conn = sqlite3.connect('database/database1.db', check_same_thread=False)
+    conn = psycopg2.connect(DATABASE_URL)
     cursor = conn.cursor()
     cursor.execute('DELETE FROM history WHERE status=1')
     conn.commit()
     conn.close()
 
-    conn = sqlite3.connect('database/database1.db', check_same_thread=False)
+    conn = psycopg2.connect(DATABASE_URL)
     cursor = conn.cursor()
     cursor.execute('DELETE FROM ideas WHERE status=1')
     conn.commit()
     conn.close()
 
-    conn = sqlite3.connect('database/database1.db', check_same_thread=False)
+    conn = psycopg2.connect(DATABASE_URL)
     cursor = conn.cursor()
     cursor.execute('DELETE FROM memes WHERE status=1')
     conn.commit()
@@ -401,14 +401,14 @@ def delete_all_messages():
 
 
 def delete_some_messages(argument):
-    conn = sqlite3.connect('database/database1.db', check_same_thread=False)
+    conn = psycopg2.connect(DATABASE_URL)
     cursor = conn.cursor()
     cursor.execute(f'SELECT id FROM {argument}')
     list_id = cursor.fetchall()
     conn.close()
 
     if len(list_id) != 0:
-        conn = sqlite3.connect('database/database1.db', check_same_thread=False)
+        conn = psycopg2.connect(DATABASE_URL)
         cursor = conn.cursor()
         cursor.execute(
             f'DELETE FROM {argument} WHERE status=1')
@@ -421,7 +421,6 @@ def start(message: telebot.types.Message):
     if message.chat.type == 'private':
         username = message.from_user.username
         markup = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
-        print(username, type(username))
         if message.text == '/help_me':
             help_me(message)
         else:
@@ -458,12 +457,14 @@ def help_me(message):
 
 @bot.message_handler(content_types=['text', 'photo'])
 def handle_error(message):
-    print('ПРИШЛИ В handle_error')
     bot.send_message(message.chat.id,
-                     text='*СЛИШКОМ МНОГО БУКВ 😳😳😳*\nВозможно, ты ввёл большой текст и телеграм'
-                          ' автоматически разделил его на несколько частей, так как у телеграмма есть свои '
-                          'ограничения по количеству символов в посте.\nТебе нужно сократить текст :)'
+                     text='*СЛИШКОМ МНОГО БУКВ 😳😳😳\nВОЗМОЖНО, ТЫ ВВЕЛ БОЛЬШОЙ ТЕКСТ И ТЕЛЕГРАММ АВТОМАТИЧЕСКИ'
+                          ' РАЗДЕЛИЛ ЕГО НА НЕСКОЛЬКО ЧАСТЕЙ, ТАК КАК У ТЕЛЕГРАММА ЕСТЬ СВОИ ОГРАНИЧЕНИЯ ПО'
+                          ' КОЛИЧЕСТВУ СИМВОЛОВ В ПОСТЕ.\nВЕРНИСЬ В САМОЕ НАЧАЛО ПРИ ПОМОЩИ КОМАНДЫ "start" В СИНЕЙ'
+                          ' ПЛАШКЕ МЕНЮ, ЗАПОЛНИ ВСЁ ЗАНОВО С УЧЁТОМ СОКРАЩЁННОГО ТЕКСТА :)\nВ ПРОТИВНОМ СЛУЧАЕ АДМИН'
+                          ' ПОЛУЧИТ ЛИШЬ ЧАСТЬ ТВОЕГО ТЕКСТА 😕*'
                      .format(message.from_user), parse_mode='Markdown')
+    # bot.register_next_step_handler(message, start)
 
 
 def admin_actions(message):
@@ -1453,9 +1454,9 @@ def finally_send_idea(message):
             bot.register_next_step_handler(message, finally_send_idea)
 
 
-bot.polling()
+# bot.polling()
 
-# if __name__ == "__main__":
-#     port = int(os.environ.get("PORT", 8080))
-#     app.run(host="0.0.0.0", port=port)
+if __name__ == "__main__":
+    port = int(os.environ.get("PORT", 8080))
+    app.run(host="0.0.0.0", port=port)
 
