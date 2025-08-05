@@ -18,8 +18,8 @@ print("BOT_TOKEN:", TOKEN)
 DATABASE_URL = os.getenv("DATABASE_URL")
 
 WEBHOOK_PATH = f"/{TOKEN}"
-WEBHOOK_URL = f"risbot-production.up.railway.app{WEBHOOK_PATH}"
-# WEBHOOK_URL = f"https://risbot-production.up.railway.app{WEBHOOK_PATH}"
+# WEBHOOK_URL = f"risbot-production.up.railway.app{WEBHOOK_PATH}"
+WEBHOOK_URL = f"https://risbot-production.up.railway.app{WEBHOOK_PATH}"
 
 
 @app.route(WEBHOOK_PATH, methods=['POST'])
@@ -1452,12 +1452,11 @@ def finally_send_idea(message):
 
 
 if __name__ == "__main__":
-    try:
-        bot.remove_webhook()
-        response = bot.set_webhook(url=WEBHOOK_URL)
-        print("set_webhook response:", response)
-    except Exception as e:
-        print("Error setting webhook:", e)
+    bot.remove_webhook()
+    success = bot.set_webhook(url=WEBHOOK_URL)
+    print("Webhook set result:", success)  # <-- Вот сюда Telegram вернет True/False
+    print("Webhook URL used:", WEBHOOK_URL)
+
     port = int(os.environ.get("PORT", 8080))
     app.run(host="0.0.0.0", port=port)
 
