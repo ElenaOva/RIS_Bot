@@ -19,13 +19,7 @@ bot = telebot.TeleBot(TOKEN)
 DATABASE_URL = os.getenv("DATABASE_URL")
 
 WEBHOOK_PATH = f"/{TOKEN}"
-WEBHOOK_URL = f"https://worker-production-4757.up.railway.app{WEBHOOK_PATH}"
-
-
-@app.before_first_request
-def setup_webhook():
-    bot.remove_webhook()
-    bot.set_webhook(url=WEBHOOK_URL)
+WEBHOOK_URL = f"https://efficient-compassion.up.railway.app{WEBHOOK_PATH}"
 
 
 @app.route(WEBHOOK_PATH, methods=['POST'])
@@ -1464,6 +1458,9 @@ def finally_send_idea(message):
 # bot.polling()
 
 if __name__ == "__main__":
+    bot.remove_webhook()
+    bot.set_webhook(url=WEBHOOK_URL)
+
     port = int(os.environ.get("PORT", 8080))
     app.run(host="0.0.0.0", port=port)
 
