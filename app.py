@@ -1,14 +1,21 @@
-import random
-import requests
-import json
-# import sqlite3
-import psycopg2
-import urllib.parse
-import telebot
-from telebot import types
-import os
-from flask import Flask, request
+# import random
+# import requests
+# import json
+# # import sqlite3
+# import psycopg2
+# import urllib.parse
+# import telebot
+# from telebot import types
+# import os
 # from flask import Flask, request
+# # from flask import Flask, request
+
+import os
+import telebot
+print("Starting")
+bot = telebot.TeleBot(os.getenv("BOT_TOKEN"))
+print("TeleBot created")
+
 
 # app = Flask(__name__)
 # TOKEN = os.getenv("BOT_TOKEN")
@@ -22,19 +29,12 @@ from flask import Flask, request
 # WEBHOOK_URL = f"https://risbot-production.up.railway.app{WEBHOOK_PATH}"
 
 
-TOKEN = os.getenv("BOT_TOKEN")
-WEBHOOK_URL = f"https://risbot-production.up.railway.app/{TOKEN}"
-
-bot = telebot.TeleBot(TOKEN)
-print("BOT_TOKEN:", TOKEN)
-
-DATABASE_URL = os.getenv("DATABASE_URL")
-
-
-# WEBHOOK_URL = f"risbot-production.up.railway.app{WEBHOOK_PATH}"
-
-
-app = Flask(__name__)
+# TOKEN = os.getenv("BOT_TOKEN")
+# WEBHOOK_URL = f"https://risbot-production.up.railway.app/{TOKEN}"
+# bot = telebot.TeleBot(TOKEN)
+# print("BOT_TOKEN:", TOKEN)
+# DATABASE_URL = os.getenv("DATABASE_URL")
+# app = Flask(__name__)
 
 
 # @app.route(f'/{TOKEN}', methods=['POST'])
@@ -53,388 +53,388 @@ app = Flask(__name__)
 #     return '', 200
 
 
-class ConvertionException(Exception):
-    pass
-
-
-class MyCustomException(Exception):
-    pass
-
-
-def get_admins():
-    conn = psycopg2.connect(DATABASE_URL)
-    cursor = conn.cursor()
-    cursor.execute(
-        'SELECT administrators.name FROM administrators')
-    result = cursor.fetchall()
-    conn.close()
-    admins = [admin[0] for admin in result]
-    return admins
-
-
-def get_example_meme():
-    conn = psycopg2.connect(DATABASE_URL)
-    cursor = conn.cursor()
-    cursor.execute(
-        'SELECT photo FROM example_meme')
-    result = cursor.fetchall()
-    conn.close()
-    actual_meme = result[0][0]
-    return actual_meme
-
-
-def get_announcements(argument):
-    conn = psycopg2.connect(DATABASE_URL)
-    cursor = conn.cursor()
-    cursor.execute(
-        'SELECT game_announcement.name, game_announcement.announcement FROM game_announcement WHERE status=%s',
-        (argument,))
-    announcements = cursor.fetchall()
-    conn.close()
-
-    if argument is False:
-        if len(announcements) == 0:
-            return 'Новых анонсов от игроков нет 😌'
-        else:
-            result = []
-            for text in announcements:
-                master = text[0]
-                text_announcement = text[1]
-                new_text = f'Мастер: @{master}\n{text_announcement}'
-                result.append(new_text)
-
-            conn = psycopg2.connect(DATABASE_URL)
-            cursor = conn.cursor()
-            cursor.execute(
-                'UPDATE game_announcement SET status=%s WHERE status=%s',
-                (True, False,))
-            conn.commit()
-            conn.close()
-            return result
-
-    elif argument is True:
-        if len(announcements) == 0:
-            return 'Анонсов от игроков пока нет 😌'
-        else:
-            result = []
-            for text in announcements:
-                master = text[0]
-                text_announcement = text[1]
-                new_text = f'Мастер: @{master}\n{text_announcement}'
-                result.append(new_text)
-            return result
-
-
-def get_stories(argument):
-    conn = psycopg2.connect(DATABASE_URL)
-    cursor = conn.cursor()
-    cursor.execute(
-        'SELECT history.author, history.text FROM history WHERE status=%s',
-        (argument, ))
-    stories = cursor.fetchall()
-    conn.close()
-
-    if argument is False:
-        if len(stories) == 0:
-            return 'Новых историй от игроков нет 😌'
-        else:
-            result = []
-            for text in stories:
-                author = text[0]
-                text_story = text[1]
-                if author != 'автор пожелал остаться анонимным 😌':
-                    new_text = f'Автор: @{author}\n{text_story}'
-                    result.append(new_text)
-                else:
-                    new_text = f'Автор: {author}\n{text_story}'
-                    result.append(new_text)
-            conn = psycopg2.connect(DATABASE_URL)
-            cursor = conn.cursor()
-            cursor.execute(
-                'UPDATE history SET status=%s WHERE status=%s',
-                (True, False,))
-            conn.commit()
-            conn.close()
-            return result
-
-    elif argument is True:
-        if len(stories) == 0:
-            return 'Историй от игроков пока нет 😌'
-        else:
-            result = []
-            for text in stories:
-                author = text[0]
-                text_story = text[1]
-                if author != 'автор пожелал остаться анонимным 😌':
-                    new_text = f'Автор: @{author}\n{text_story}'
-                    result.append(new_text)
-                else:
-                    new_text = f'Автор: {author}\n{text_story}'
-                    result.append(new_text)
-            return result
-
-
-def get_ideas(argument):
-    conn = psycopg2.connect(DATABASE_URL)
-    cursor = conn.cursor()
-    cursor.execute(
-        'SELECT ideas.author, ideas.idea FROM ideas WHERE status=%s',
-        (argument, ))
-    ideas = cursor.fetchall()
-    conn.close()
-
-    if argument is False:
-        if len(ideas) == 0:
-            return 'Новых идей от игроков нет 😌'
-        else:
-            result = []
-            for elem in ideas:
-                author = elem[0]
-                text_idea = elem[1]
-                if author != 'автор пожелал остаться анонимным 😌':
-                    new_text = f'Автор: @{author}\n{text_idea}'
-                    result.append(new_text)
-                else:
-                    new_text = f'Автор: {author}\n{text_idea}'
-                    result.append(new_text)
-            conn = psycopg2.connect(DATABASE_URL)
-            cursor = conn.cursor()
-            cursor.execute(
-                'UPDATE ideas SET status=%s WHERE status=%s',
-                (True, False,))
-            conn.commit()
-            conn.close()
-            return result
-
-    elif argument is True:
-        if len(ideas) == 0:
-            return 'Идей от игроков пока нет 😌'
-        else:
-            result = []
-            for elem in ideas:
-                author = elem[0]
-                text_idea = elem[1]
-                if author != 'автор пожелал остаться анонимным 😌':
-                    new_text = f'Автор: @{author}\n{text_idea}'
-                    result.append(new_text)
-                else:
-                    new_text = f'Автор: {author}\n{text_idea}'
-                    result.append(new_text)
-            return result
-
-
-def get_memes(argument):
-    conn = psycopg2.connect(DATABASE_URL)
-    cursor = conn.cursor()
-    cursor.execute(
-        'SELECT memes.author, memes.meme FROM memes WHERE status=%s',
-        (argument, ))
-    memes = cursor.fetchall()
-    conn.close()
-
-    if argument is False:
-        if len(memes) == 0:
-            return 'Новых мемов от игроков нет 😌'
-        else:
-            result = []
-            for elem in memes:
-                new_list = []
-                author = elem[0]
-                photo = elem[1]
-                if author != 'автор пожелал остаться анонимным 😌':
-                    new_text = f'Автор: @{author}'
-                    new_list.append(new_text)
-                    new_list.append(photo)
-                    result.append(new_list)
-                else:
-                    new_text = f'Автор: {author}'
-                    new_list.append(new_text)
-                    new_list.append(photo)
-                    result.append(new_list)
-            conn = psycopg2.connect(DATABASE_URL)
-            cursor = conn.cursor()
-            cursor.execute(
-                'UPDATE memes SET status=%s WHERE status=%s',
-                (True, False,))
-            conn.commit()
-            conn.close()
-            return result
-
-    elif argument is True:
-        if len(memes) == 0:
-            return 'Мемов от игроков пока нет 😌'
-        else:
-            result = []
-            for elem in memes:
-                new_list = []
-                author = elem[0]
-                photo = elem[1]
-                if author != 'автор пожелал остаться анонимным 😌':
-                    new_text = f'Автор: @{author}'
-                    new_list.append(new_text)
-                    new_list.append(photo)
-                    result.append(new_list)
-                else:
-                    new_text = f'Автор: {author}'
-                    new_list.append(new_text)
-                    new_list.append(photo)
-                    result.append(new_list)
-            return result
-
-
-def add_announcement(data, name):
-    conn = psycopg2.connect(DATABASE_URL)
-    cursor = conn.cursor()
-    cursor.execute(
-        f'INSERT INTO game_announcement (announcement, name) VALUES (%s, %s)', (data, name))
-    conn.commit()
-    conn.close()
-
-
-def delete_announcement():
-    conn = psycopg2.connect(DATABASE_URL)
-    cursor = conn.cursor()
-    cursor.execute('SELECT id FROM game_announcement')
-    list_id = cursor.fetchall()
-    conn.close()
-
-    if len(list_id) != 0:
-        list_id = [elem[0] for elem in list_id]
-        list_id.sort()
-        actual_id = list_id[-1]
-
-        conn = psycopg2.connect(DATABASE_URL)
-        cursor = conn.cursor()
-        cursor.execute(
-            'DELETE FROM game_announcement WHERE id=%s ', (actual_id,))
-        conn.commit()
-        conn.close()
-
-
-def add_history(data, name, status):
-    if status == 'anonymous':
-        conn = psycopg2.connect(DATABASE_URL)
-        cursor = conn.cursor()
-        cursor.execute(
-            f'INSERT INTO history (text, author) VALUES ("{data}", "автор пожелал остаться анонимным 😌")')
-        conn.commit()
-        conn.close()
-    else:
-        conn = psycopg2.connect(DATABASE_URL)
-        cursor = conn.cursor()
-        cursor.execute(
-            f'INSERT INTO history (text, author) VALUES ("{data}", "{name}")')
-        conn.commit()
-        conn.close()
-
-
-def delete_history():
-    conn = psycopg2.connect(DATABASE_URL)
-    cursor = conn.cursor()
-    cursor.execute('SELECT id FROM history')
-    list_id = cursor.fetchall()
-    conn.close()
-
-    if len(list_id) != 0:
-        list_id = [elem[0] for elem in list_id]
-        list_id.sort()
-        actual_id = list_id[-1]
-
-        conn = psycopg2.connect(DATABASE_URL)
-        cursor = conn.cursor()
-        cursor.execute(
-            'DELETE FROM history WHERE id=%s ', (actual_id,))
-        conn.commit()
-        conn.close()
-
-
-def add_idea(data, name, status):
-    if status == 'anonymous':
-        conn = psycopg2.connect(DATABASE_URL)
-        cursor = conn.cursor()
-        cursor.execute(
-            f'INSERT INTO ideas (idea, author) VALUES ("{data}", "автор пожелал остаться анонимным 😌")')
-        conn.commit()
-        conn.close()
-    else:
-        conn = psycopg2.connect(DATABASE_URL)
-        cursor = conn.cursor()
-        cursor.execute(
-            f'INSERT INTO ideas (idea, author) VALUES ("{data}", "{name}")')
-        conn.commit()
-        conn.close()
-
-
-def delete_idea():
-    conn = psycopg2.connect(DATABASE_URL)
-    cursor = conn.cursor()
-    cursor.execute('SELECT id FROM ideas')
-    list_id = cursor.fetchall()
-    conn.close()
-
-    if len(list_id) != 0:
-        list_id = [elem[0] for elem in list_id]
-        list_id.sort()
-        actual_id = list_id[-1]
-
-        conn = psycopg2.connect(DATABASE_URL)
-        cursor = conn.cursor()
-        cursor.execute(
-            'DELETE FROM ideas WHERE id=%s', (actual_id,))
-        conn.commit()
-        conn.close()
-
-
-def add_meme(data, author):
-    conn = psycopg2.connect(DATABASE_URL)
-    cursor = conn.cursor()
-    cursor.execute(
-        f'INSERT INTO memes (meme, author) VALUES ("{data}", "{author}")')
-    conn.commit()
-    conn.close()
-
-
-def delete_all_messages():
-    conn = psycopg2.connect(DATABASE_URL)
-    cursor = conn.cursor()
-    cursor.execute('DELETE FROM game_announcement WHERE status=1')
-    conn.commit()
-    conn.close()
-
-    conn = psycopg2.connect(DATABASE_URL)
-    cursor = conn.cursor()
-    cursor.execute('DELETE FROM history WHERE status=1')
-    conn.commit()
-    conn.close()
-
-    conn = psycopg2.connect(DATABASE_URL)
-    cursor = conn.cursor()
-    cursor.execute('DELETE FROM ideas WHERE status=1')
-    conn.commit()
-    conn.close()
-
-    conn = psycopg2.connect(DATABASE_URL)
-    cursor = conn.cursor()
-    cursor.execute('DELETE FROM memes WHERE status=1')
-    conn.commit()
-    conn.close()
-
-
-def delete_some_messages(argument):
-    conn = psycopg2.connect(DATABASE_URL)
-    cursor = conn.cursor()
-    cursor.execute(f'SELECT id FROM {argument}')
-    list_id = cursor.fetchall()
-    conn.close()
-
-    if len(list_id) != 0:
-        conn = psycopg2.connect(DATABASE_URL)
-        cursor = conn.cursor()
-        cursor.execute(
-            f'DELETE FROM {argument} WHERE status=1')
-        conn.commit()
-        conn.close()
-
+# class ConvertionException(Exception):
+#     pass
+#
+#
+# class MyCustomException(Exception):
+#     pass
+#
+#
+# def get_admins():
+#     conn = psycopg2.connect(DATABASE_URL)
+#     cursor = conn.cursor()
+#     cursor.execute(
+#         'SELECT administrators.name FROM administrators')
+#     result = cursor.fetchall()
+#     conn.close()
+#     admins = [admin[0] for admin in result]
+#     return admins
+#
+#
+# def get_example_meme():
+#     conn = psycopg2.connect(DATABASE_URL)
+#     cursor = conn.cursor()
+#     cursor.execute(
+#         'SELECT photo FROM example_meme')
+#     result = cursor.fetchall()
+#     conn.close()
+#     actual_meme = result[0][0]
+#     return actual_meme
+#
+#
+# def get_announcements(argument):
+#     conn = psycopg2.connect(DATABASE_URL)
+#     cursor = conn.cursor()
+#     cursor.execute(
+#         'SELECT game_announcement.name, game_announcement.announcement FROM game_announcement WHERE status=%s',
+#         (argument,))
+#     announcements = cursor.fetchall()
+#     conn.close()
+#
+#     if argument is False:
+#         if len(announcements) == 0:
+#             return 'Новых анонсов от игроков нет 😌'
+#         else:
+#             result = []
+#             for text in announcements:
+#                 master = text[0]
+#                 text_announcement = text[1]
+#                 new_text = f'Мастер: @{master}\n{text_announcement}'
+#                 result.append(new_text)
+#
+#             conn = psycopg2.connect(DATABASE_URL)
+#             cursor = conn.cursor()
+#             cursor.execute(
+#                 'UPDATE game_announcement SET status=%s WHERE status=%s',
+#                 (True, False,))
+#             conn.commit()
+#             conn.close()
+#             return result
+#
+#     elif argument is True:
+#         if len(announcements) == 0:
+#             return 'Анонсов от игроков пока нет 😌'
+#         else:
+#             result = []
+#             for text in announcements:
+#                 master = text[0]
+#                 text_announcement = text[1]
+#                 new_text = f'Мастер: @{master}\n{text_announcement}'
+#                 result.append(new_text)
+#             return result
+#
+#
+# def get_stories(argument):
+#     conn = psycopg2.connect(DATABASE_URL)
+#     cursor = conn.cursor()
+#     cursor.execute(
+#         'SELECT history.author, history.text FROM history WHERE status=%s',
+#         (argument, ))
+#     stories = cursor.fetchall()
+#     conn.close()
+#
+#     if argument is False:
+#         if len(stories) == 0:
+#             return 'Новых историй от игроков нет 😌'
+#         else:
+#             result = []
+#             for text in stories:
+#                 author = text[0]
+#                 text_story = text[1]
+#                 if author != 'автор пожелал остаться анонимным 😌':
+#                     new_text = f'Автор: @{author}\n{text_story}'
+#                     result.append(new_text)
+#                 else:
+#                     new_text = f'Автор: {author}\n{text_story}'
+#                     result.append(new_text)
+#             conn = psycopg2.connect(DATABASE_URL)
+#             cursor = conn.cursor()
+#             cursor.execute(
+#                 'UPDATE history SET status=%s WHERE status=%s',
+#                 (True, False,))
+#             conn.commit()
+#             conn.close()
+#             return result
+#
+#     elif argument is True:
+#         if len(stories) == 0:
+#             return 'Историй от игроков пока нет 😌'
+#         else:
+#             result = []
+#             for text in stories:
+#                 author = text[0]
+#                 text_story = text[1]
+#                 if author != 'автор пожелал остаться анонимным 😌':
+#                     new_text = f'Автор: @{author}\n{text_story}'
+#                     result.append(new_text)
+#                 else:
+#                     new_text = f'Автор: {author}\n{text_story}'
+#                     result.append(new_text)
+#             return result
+#
+#
+# def get_ideas(argument):
+#     conn = psycopg2.connect(DATABASE_URL)
+#     cursor = conn.cursor()
+#     cursor.execute(
+#         'SELECT ideas.author, ideas.idea FROM ideas WHERE status=%s',
+#         (argument, ))
+#     ideas = cursor.fetchall()
+#     conn.close()
+#
+#     if argument is False:
+#         if len(ideas) == 0:
+#             return 'Новых идей от игроков нет 😌'
+#         else:
+#             result = []
+#             for elem in ideas:
+#                 author = elem[0]
+#                 text_idea = elem[1]
+#                 if author != 'автор пожелал остаться анонимным 😌':
+#                     new_text = f'Автор: @{author}\n{text_idea}'
+#                     result.append(new_text)
+#                 else:
+#                     new_text = f'Автор: {author}\n{text_idea}'
+#                     result.append(new_text)
+#             conn = psycopg2.connect(DATABASE_URL)
+#             cursor = conn.cursor()
+#             cursor.execute(
+#                 'UPDATE ideas SET status=%s WHERE status=%s',
+#                 (True, False,))
+#             conn.commit()
+#             conn.close()
+#             return result
+#
+#     elif argument is True:
+#         if len(ideas) == 0:
+#             return 'Идей от игроков пока нет 😌'
+#         else:
+#             result = []
+#             for elem in ideas:
+#                 author = elem[0]
+#                 text_idea = elem[1]
+#                 if author != 'автор пожелал остаться анонимным 😌':
+#                     new_text = f'Автор: @{author}\n{text_idea}'
+#                     result.append(new_text)
+#                 else:
+#                     new_text = f'Автор: {author}\n{text_idea}'
+#                     result.append(new_text)
+#             return result
+#
+#
+# def get_memes(argument):
+#     conn = psycopg2.connect(DATABASE_URL)
+#     cursor = conn.cursor()
+#     cursor.execute(
+#         'SELECT memes.author, memes.meme FROM memes WHERE status=%s',
+#         (argument, ))
+#     memes = cursor.fetchall()
+#     conn.close()
+#
+#     if argument is False:
+#         if len(memes) == 0:
+#             return 'Новых мемов от игроков нет 😌'
+#         else:
+#             result = []
+#             for elem in memes:
+#                 new_list = []
+#                 author = elem[0]
+#                 photo = elem[1]
+#                 if author != 'автор пожелал остаться анонимным 😌':
+#                     new_text = f'Автор: @{author}'
+#                     new_list.append(new_text)
+#                     new_list.append(photo)
+#                     result.append(new_list)
+#                 else:
+#                     new_text = f'Автор: {author}'
+#                     new_list.append(new_text)
+#                     new_list.append(photo)
+#                     result.append(new_list)
+#             conn = psycopg2.connect(DATABASE_URL)
+#             cursor = conn.cursor()
+#             cursor.execute(
+#                 'UPDATE memes SET status=%s WHERE status=%s',
+#                 (True, False,))
+#             conn.commit()
+#             conn.close()
+#             return result
+#
+#     elif argument is True:
+#         if len(memes) == 0:
+#             return 'Мемов от игроков пока нет 😌'
+#         else:
+#             result = []
+#             for elem in memes:
+#                 new_list = []
+#                 author = elem[0]
+#                 photo = elem[1]
+#                 if author != 'автор пожелал остаться анонимным 😌':
+#                     new_text = f'Автор: @{author}'
+#                     new_list.append(new_text)
+#                     new_list.append(photo)
+#                     result.append(new_list)
+#                 else:
+#                     new_text = f'Автор: {author}'
+#                     new_list.append(new_text)
+#                     new_list.append(photo)
+#                     result.append(new_list)
+#             return result
+#
+#
+# def add_announcement(data, name):
+#     conn = psycopg2.connect(DATABASE_URL)
+#     cursor = conn.cursor()
+#     cursor.execute(
+#         f'INSERT INTO game_announcement (announcement, name) VALUES (%s, %s)', (data, name))
+#     conn.commit()
+#     conn.close()
+#
+#
+# def delete_announcement():
+#     conn = psycopg2.connect(DATABASE_URL)
+#     cursor = conn.cursor()
+#     cursor.execute('SELECT id FROM game_announcement')
+#     list_id = cursor.fetchall()
+#     conn.close()
+#
+#     if len(list_id) != 0:
+#         list_id = [elem[0] for elem in list_id]
+#         list_id.sort()
+#         actual_id = list_id[-1]
+#
+#         conn = psycopg2.connect(DATABASE_URL)
+#         cursor = conn.cursor()
+#         cursor.execute(
+#             'DELETE FROM game_announcement WHERE id=%s ', (actual_id,))
+#         conn.commit()
+#         conn.close()
+#
+#
+# def add_history(data, name, status):
+#     if status == 'anonymous':
+#         conn = psycopg2.connect(DATABASE_URL)
+#         cursor = conn.cursor()
+#         cursor.execute(
+#             f'INSERT INTO history (text, author) VALUES ("{data}", "автор пожелал остаться анонимным 😌")')
+#         conn.commit()
+#         conn.close()
+#     else:
+#         conn = psycopg2.connect(DATABASE_URL)
+#         cursor = conn.cursor()
+#         cursor.execute(
+#             f'INSERT INTO history (text, author) VALUES ("{data}", "{name}")')
+#         conn.commit()
+#         conn.close()
+#
+#
+# def delete_history():
+#     conn = psycopg2.connect(DATABASE_URL)
+#     cursor = conn.cursor()
+#     cursor.execute('SELECT id FROM history')
+#     list_id = cursor.fetchall()
+#     conn.close()
+#
+#     if len(list_id) != 0:
+#         list_id = [elem[0] for elem in list_id]
+#         list_id.sort()
+#         actual_id = list_id[-1]
+#
+#         conn = psycopg2.connect(DATABASE_URL)
+#         cursor = conn.cursor()
+#         cursor.execute(
+#             'DELETE FROM history WHERE id=%s ', (actual_id,))
+#         conn.commit()
+#         conn.close()
+#
+#
+# def add_idea(data, name, status):
+#     if status == 'anonymous':
+#         conn = psycopg2.connect(DATABASE_URL)
+#         cursor = conn.cursor()
+#         cursor.execute(
+#             f'INSERT INTO ideas (idea, author) VALUES ("{data}", "автор пожелал остаться анонимным 😌")')
+#         conn.commit()
+#         conn.close()
+#     else:
+#         conn = psycopg2.connect(DATABASE_URL)
+#         cursor = conn.cursor()
+#         cursor.execute(
+#             f'INSERT INTO ideas (idea, author) VALUES ("{data}", "{name}")')
+#         conn.commit()
+#         conn.close()
+#
+#
+# def delete_idea():
+#     conn = psycopg2.connect(DATABASE_URL)
+#     cursor = conn.cursor()
+#     cursor.execute('SELECT id FROM ideas')
+#     list_id = cursor.fetchall()
+#     conn.close()
+#
+#     if len(list_id) != 0:
+#         list_id = [elem[0] for elem in list_id]
+#         list_id.sort()
+#         actual_id = list_id[-1]
+#
+#         conn = psycopg2.connect(DATABASE_URL)
+#         cursor = conn.cursor()
+#         cursor.execute(
+#             'DELETE FROM ideas WHERE id=%s', (actual_id,))
+#         conn.commit()
+#         conn.close()
+#
+#
+# def add_meme(data, author):
+#     conn = psycopg2.connect(DATABASE_URL)
+#     cursor = conn.cursor()
+#     cursor.execute(
+#         f'INSERT INTO memes (meme, author) VALUES ("{data}", "{author}")')
+#     conn.commit()
+#     conn.close()
+#
+#
+# def delete_all_messages():
+#     conn = psycopg2.connect(DATABASE_URL)
+#     cursor = conn.cursor()
+#     cursor.execute('DELETE FROM game_announcement WHERE status=1')
+#     conn.commit()
+#     conn.close()
+#
+#     conn = psycopg2.connect(DATABASE_URL)
+#     cursor = conn.cursor()
+#     cursor.execute('DELETE FROM history WHERE status=1')
+#     conn.commit()
+#     conn.close()
+#
+#     conn = psycopg2.connect(DATABASE_URL)
+#     cursor = conn.cursor()
+#     cursor.execute('DELETE FROM ideas WHERE status=1')
+#     conn.commit()
+#     conn.close()
+#
+#     conn = psycopg2.connect(DATABASE_URL)
+#     cursor = conn.cursor()
+#     cursor.execute('DELETE FROM memes WHERE status=1')
+#     conn.commit()
+#     conn.close()
+#
+#
+# def delete_some_messages(argument):
+#     conn = psycopg2.connect(DATABASE_URL)
+#     cursor = conn.cursor()
+#     cursor.execute(f'SELECT id FROM {argument}')
+#     list_id = cursor.fetchall()
+#     conn.close()
+#
+#     if len(list_id) != 0:
+#         conn = psycopg2.connect(DATABASE_URL)
+#         cursor = conn.cursor()
+#         cursor.execute(
+#             f'DELETE FROM {argument} WHERE status=1')
+#         conn.commit()
+#         conn.close()
+#
 
 # @bot.message_handler(commands=['start', ])
 # def start(message: telebot.types.Message):
@@ -1475,33 +1475,33 @@ def delete_some_messages(argument):
 #             bot.register_next_step_handler(message, finally_send_idea)
 
 
-@bot.message_handler(commands=['start', 'help_me'])
-def send_welcome(message):
-    bot.reply_to(message, "Привет! Я живой.")
+# @bot.message_handler(commands=['start', 'help_me'])
+# def send_welcome(message):
+#     bot.reply_to(message, "Привет! Я живой.")
 
 
-@app.route(f"/{TOKEN}", methods=['POST'])
-def webhook():
-    json_str = request.get_data().decode('utf-8')
-    update = telebot.types.Update.de_json(json_str)
-    bot.process_new_updates([update])
-    return '', 200
-
-
-if __name__ == "__main__":
-    try:
-        print("Removing webhook...")
-        bot.remove_webhook()
-
-        print("Setting webhook...")
-        success = bot.set_webhook(url=WEBHOOK_URL)
-        print("Webhook set result:", success)
-    except Exception as e:
-        print("Webhook setup error:", e)
-
-    port = int(os.environ.get("PORT", 8080))
-    print(f"Starting Flask on port {port}")
-    app.run(host="0.0.0.0", port=port)
+# @app.route(f"/{TOKEN}", methods=['POST'])
+# def webhook():
+#     json_str = request.get_data().decode('utf-8')
+#     update = telebot.types.Update.de_json(json_str)
+#     bot.process_new_updates([update])
+#     return '', 200
+#
+#
+# if __name__ == "__main__":
+#     try:
+#         print("Removing webhook...")
+#         bot.remove_webhook()
+#
+#         print("Setting webhook...")
+#         success = bot.set_webhook(url=WEBHOOK_URL)
+#         print("Webhook set result:", success)
+#     except Exception as e:
+#         print("Webhook setup error:", e)
+#
+#     port = int(os.environ.get("PORT", 8080))
+#     print(f"Starting Flask on port {port}")
+#     app.run(host="0.0.0.0", port=port)
 
 
 # if __name__ == "__main__":
