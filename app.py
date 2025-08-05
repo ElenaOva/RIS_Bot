@@ -369,10 +369,15 @@ def delete_idea():
 
 
 def add_meme(data, author):
+    # photo = message.photo[-1]  # Берем изображение с наибольшим разрешением
+    # add_inf_masters(photo.file_id, 'photo', username)
+    # back_to_master_short_schedule(message)
+
+    # photo = message.photo[-1]
+    # add_meme(photo.file_id, username)
     conn = psycopg2.connect(DATABASE_URL)
     cursor = conn.cursor()
-    cursor.execute(
-        f'INSERT INTO memes (meme, author) VALUES ("{data}", "{author}")')
+    cursor.execute('INSERT INTO memes (meme, author) VALUES (%s, %s)', (data, author))
     conn.commit()
     conn.close()
 
@@ -985,6 +990,9 @@ def send_meme(message):
             elif content_type == 'photo':
                 markup.add(types.KeyboardButton('Прислать новость 📝'),
                            types.KeyboardButton('Прислать мем 🦄'))
+                # photo = message.photo[-1]  # Берем изображение с наибольшим разрешением
+                # add_inf_masters(photo.file_id, 'photo', username)
+                # back_to_master_short_schedule(message)
                 photo = message.photo[-1]
                 add_meme(photo.file_id, username)
                 bot.send_message(message.chat.id,
