@@ -1,4 +1,3 @@
-import telebot
 import random
 import requests
 import json
@@ -14,12 +13,12 @@ from flask import Flask, request
 app = Flask(__name__)
 TOKEN = os.getenv("BOT_TOKEN")
 bot = telebot.TeleBot(TOKEN)
-
+print("BOT_TOKEN:", TOKEN)
 
 DATABASE_URL = os.getenv("DATABASE_URL")
 
 WEBHOOK_PATH = f"/{TOKEN}"
-WEBHOOK_URL = f"https://efficient-compassion.up.railway.app{WEBHOOK_PATH}"
+WEBHOOK_URL = f"https://risbot-production.up.railway.app{WEBHOOK_PATH}"
 
 
 @app.route(WEBHOOK_PATH, methods=['POST'])
@@ -28,10 +27,6 @@ def webhook():
     update = telebot.types.Update.de_json(json_str)
     bot.process_new_updates([update])
     return '', 200
-
-
-# TOKEN = '8112386542:AAFpPY0R7SzzbvSliVd4TKIbZK723U8IMjM'
-# bot = telebot.TeleBot(TOKEN)
 
 
 class ConvertionException(Exception):
@@ -1455,12 +1450,9 @@ def finally_send_idea(message):
             bot.register_next_step_handler(message, finally_send_idea)
 
 
-# bot.polling()
-
 if __name__ == "__main__":
     bot.remove_webhook()
     bot.set_webhook(url=WEBHOOK_URL)
-
     port = int(os.environ.get("PORT", 8080))
     app.run(host="0.0.0.0", port=port)
 
