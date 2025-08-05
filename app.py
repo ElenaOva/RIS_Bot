@@ -15,11 +15,16 @@ bot = telebot.TeleBot(TOKEN)
 print("BOT_TOKEN:", TOKEN)
 
 DATABASE_URL = os.getenv("DATABASE_URL")
+print("DATABASE_URL:", DATABASE_URL)
+
 
 WEBHOOK_PATH = f"/{TOKEN}"
+print("WEBHOOK_PATH:", WEBHOOK_PATH)
 WEBHOOK_URL = f"https://risbot-production.up.railway.app{WEBHOOK_PATH}"
+print("WEBHOOK_PATH:", WEBHOOK_PATH)
 
 app = Flask(__name__)
+print('app = Flask(__name__)')
 
 
 @app.route(WEBHOOK_PATH, methods=['POST'])
@@ -27,6 +32,7 @@ def webhook():
     json_str = request.get_data().decode('utf-8')
     update = telebot.types.Update.de_json(json_str)
     bot.process_new_updates([update])
+    print('in @app.route')
     return '', 200
 
 
@@ -1469,6 +1475,7 @@ def finally_send_idea(message):
 
 
 if __name__ == "__main__":
+    print('in if __name__ == "__main__"')
     bot.remove_webhook()
     bot.set_webhook(url=WEBHOOK_URL)
 
