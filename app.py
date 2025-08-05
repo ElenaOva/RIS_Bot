@@ -1451,8 +1451,12 @@ def finally_send_idea(message):
 
 
 if __name__ == "__main__":
-    bot.remove_webhook()
-    bot.set_webhook(url=WEBHOOK_URL)
+    try:
+        bot.remove_webhook()
+        response = bot.set_webhook(url=WEBHOOK_URL)
+        print("set_webhook response:", response)
+    except Exception as e:
+        print("Error setting webhook:", e)
     port = int(os.environ.get("PORT", 8080))
     app.run(host="0.0.0.0", port=port)
 
