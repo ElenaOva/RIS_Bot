@@ -210,8 +210,7 @@ def get_memes(argument):
     conn = psycopg2.connect(DATABASE_URL)
     cursor = conn.cursor()
     cursor.execute(
-        'SELECT memes.author, memes.meme FROM memes WHERE status=%s',
-        ("NULL", ))
+        'SELECT memes.author, memes.meme FROM memes WHERE status IS NULL')
     memes = cursor.fetchall()
     print(f'memes = {memes}')
     conn.close()
@@ -238,8 +237,8 @@ def get_memes(argument):
             conn = psycopg2.connect(DATABASE_URL)
             cursor = conn.cursor()
             cursor.execute(
-                'UPDATE memes SET status=%s WHERE status=%s',
-                (True, 'NULL',))
+                'UPDATE memes SET status=%s WHERE status IS NULL',
+                (True, ))
             conn.commit()
             conn.close()
             return result
