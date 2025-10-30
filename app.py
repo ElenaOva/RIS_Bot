@@ -70,12 +70,11 @@ def get_announcements(argument):
     conn = psycopg2.connect(DATABASE_URL)
     cursor = conn.cursor()
     cursor.execute(
-        'SELECT game_announcement.name, game_announcement.announcement FROM game_announcement WHERE status=%s',
-        (argument, ))
+        'SELECT game_announcement.name, game_announcement.announcement FROM game_announcement WHERE status IS NULL')
     announcements = cursor.fetchall()
     conn.close()
 
-    if argument is False:
+    if argument is None:
         if len(announcements) == 0:
             return 'Новых анонсов от игроков нет 😌'
         else:
@@ -89,8 +88,8 @@ def get_announcements(argument):
             conn = psycopg2.connect(DATABASE_URL)
             cursor = conn.cursor()
             cursor.execute(
-                'UPDATE game_announcement SET status=%s WHERE status=%s',
-                (True, False,))
+                'UPDATE game_announcement SET status=%s WHERE status IS NULL',
+                (True, ))
             conn.commit()
             conn.close()
             return result
@@ -112,12 +111,11 @@ def get_stories(argument):
     conn = psycopg2.connect(DATABASE_URL)
     cursor = conn.cursor()
     cursor.execute(
-        'SELECT history.author, history.text FROM history WHERE status=%s',
-        (argument, ))
+        'SELECT history.author, history.text FROM history WHERE status IS NULL')
     stories = cursor.fetchall()
     conn.close()
 
-    if argument is False:
+    if argument is None:
         if len(stories) == 0:
             return 'Новых историй от игроков нет 😌'
         else:
@@ -134,8 +132,8 @@ def get_stories(argument):
             conn = psycopg2.connect(DATABASE_URL)
             cursor = conn.cursor()
             cursor.execute(
-                'UPDATE history SET status=%s WHERE status=%s',
-                (True, False,))
+                'UPDATE history SET status=%s WHERE status IS NULL',
+                (True, ))
             conn.commit()
             conn.close()
             return result
@@ -161,12 +159,11 @@ def get_ideas(argument):
     conn = psycopg2.connect(DATABASE_URL)
     cursor = conn.cursor()
     cursor.execute(
-        'SELECT ideas.author, ideas.idea FROM ideas WHERE status=%s',
-        (argument, ))
+        'SELECT ideas.author, ideas.idea FROM ideas WHERE status IS NULL')
     ideas = cursor.fetchall()
     conn.close()
 
-    if argument is False:
+    if argument is None:
         if len(ideas) == 0:
             return 'Новых идей от игроков нет 😌'
         else:
@@ -183,8 +180,8 @@ def get_ideas(argument):
             conn = psycopg2.connect(DATABASE_URL)
             cursor = conn.cursor()
             cursor.execute(
-                'UPDATE ideas SET status=%s WHERE status=%s',
-                (True, False,))
+                'UPDATE ideas SET status=%s WHERE status IS NULL',
+                (True, ))
             conn.commit()
             conn.close()
             return result
@@ -689,7 +686,7 @@ def view_messages(message, argument):
                                      text='{0.first_name}, ты что-то не то нажимаешь😌\nВыбери один из '
                                           'вариантов, представленных ниже :)'.format(message.from_user),
                                      reply_markup=markup)
-                    bot.register_next_step_handler(message, view_messages, False)
+                    bot.register_next_step_handler(message, view_messages, None)
             else:
                 markup.add(types.KeyboardButton('Анонсы игр'), types.KeyboardButton('Ролевые истории'),
                            types.KeyboardButton('Идеи для развития сообщества'),
