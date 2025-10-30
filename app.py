@@ -215,7 +215,7 @@ def get_memes(argument):
     memes = cursor.fetchall()
     conn.close()
 
-    if argument is False:
+    if argument is None:
         if len(memes) == 0:
             return 'Новых мемов от игроков нет 😌'
         else:
@@ -238,7 +238,7 @@ def get_memes(argument):
             cursor = conn.cursor()
             cursor.execute(
                 'UPDATE memes SET status=%s WHERE status=%s',
-                (True, False,))
+                (True, None,))
             conn.commit()
             conn.close()
             return result
@@ -487,7 +487,7 @@ def admin_actions(message):
                            types.KeyboardButton('Вернуться в главное меню'))
                 bot.send_message(message.chat.id, text='Реши, что хочешь посмотреть и нажми на эту кнопку :)',
                                  reply_markup=markup)
-                bot.register_next_step_handler(message, view_messages, False)
+                bot.register_next_step_handler(message, view_messages, None)
             elif message.text == 'Просмотренные сообщения':
                 markup.add(types.KeyboardButton('Анонсы игр'), types.KeyboardButton('Ролевые истории'),
                            types.KeyboardButton('Идеи для развития сообщества'),
@@ -613,7 +613,7 @@ def view_messages(message, argument):
                                           'вариантов, представленных ниже :)'.format(message.from_user),
                                      reply_markup=markup)
                     bot.register_next_step_handler(message, view_messages, True)
-            elif argument is False:
+            elif argument is None:
                 if message.text == 'Анонсы игр':
                     announcements = get_announcements(argument)
                     if type(announcements) is str:
