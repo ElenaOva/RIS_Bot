@@ -211,8 +211,9 @@ def get_memes(argument):
     cursor = conn.cursor()
     cursor.execute(
         'SELECT memes.author, memes.meme FROM memes WHERE status=%s',
-        (argument, ))
+        ("NULL", ))
     memes = cursor.fetchall()
+    print(f'memes = {memes}')
     conn.close()
 
     if argument is None:
@@ -238,7 +239,7 @@ def get_memes(argument):
             cursor = conn.cursor()
             cursor.execute(
                 'UPDATE memes SET status=%s WHERE status=%s',
-                (True, None,))
+                (True, 'NULL',))
             conn.commit()
             conn.close()
             return result
