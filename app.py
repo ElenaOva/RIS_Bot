@@ -72,7 +72,7 @@ def get_announcements(argument):
     cursor.execute(
         'SELECT game_announcement.name, game_announcement.announcement FROM game_announcement WHERE status IS NULL')
     announcements = cursor.fetchall()
-    print(f'announcements = {announcements}')
+    print(f'announcements = {announcements}, {type(announcements)}')
     conn.close()
 
     if argument is None:
