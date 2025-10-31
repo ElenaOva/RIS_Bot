@@ -100,7 +100,8 @@ def get_announcements(argument):
         conn = psycopg2.connect(DATABASE_URL)
         cursor = conn.cursor()
         cursor.execute(
-            'SELECT game_announcement.name, game_announcement.announcement FROM game_announcement WHERE status = TRUE')
+            'SELECT game_announcement.name, game_announcement.announcement FROM game_announcement '
+            'WHERE status=%s', ('true', ))
         announcements_status_true = cursor.fetchall()
         print(f'announcements = {announcements_status_true}, {type(announcements_status_true)}')
         conn.close()
@@ -152,7 +153,7 @@ def get_stories(argument):
         conn = psycopg2.connect(DATABASE_URL)
         cursor = conn.cursor()
         cursor.execute(
-            'SELECT history.author, history.text FROM history WHERE status = TRUE')
+            'SELECT history.author, history.text FROM history WHERE status=%s', ('true', ))
         stories_status_true = cursor.fetchall()
         conn.close()
 
@@ -207,7 +208,7 @@ def get_ideas(argument):
         conn = psycopg2.connect(DATABASE_URL)
         cursor = conn.cursor()
         cursor.execute(
-            'SELECT ideas.author, ideas.idea FROM ideas WHERE status = TRUE')
+            'SELECT ideas.author, ideas.idea FROM ideas WHERE status=%s', ('true', ))
         ideas_status_true = cursor.fetchall()
         conn.close()
 
@@ -268,7 +269,7 @@ def get_memes(argument):
         conn = psycopg2.connect(DATABASE_URL)
         cursor = conn.cursor()
         cursor.execute(
-            'SELECT memes.author, memes.meme FROM memes WHERE status = TRUE')
+            'SELECT memes.author, memes.meme FROM memes WHERE status=%s', ('true', ))
         memes_status_true = cursor.fetchall()
         print(f'memes = {memes_status_true}')
         conn.close()
