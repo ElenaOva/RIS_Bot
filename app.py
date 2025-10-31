@@ -96,6 +96,7 @@ def get_announcements(argument):
             return result
 
     elif argument is True:
+        print('ПРИШЛИ В TRUE')
         conn = psycopg2.connect(DATABASE_URL)
         cursor = conn.cursor()
         cursor.execute(
