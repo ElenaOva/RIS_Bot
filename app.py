@@ -431,7 +431,7 @@ def delete_all_messages():
     conn.close()
 
 
-def delete_many_messages(argument):
+def delete_some_messages(argument):
     conn = psycopg2.connect(DATABASE_URL)
     cursor = conn.cursor()
     query = sql.SQL('SELECT id FROM {}').format(sql.Identifier(argument))
