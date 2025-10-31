@@ -440,7 +440,7 @@ def delete_some_messages(argument):
     if len(list_id) != 0:
         conn = psycopg2.connect(DATABASE_URL)
         cursor = conn.cursor()
-        cursor.execute('DELETE FROM %s WHERE status=1', (argument, ))
+        cursor.execute('DELETE FROM %s WHERE status=%s', ('true', argument, ))
         conn.commit()
         conn.close()
 
