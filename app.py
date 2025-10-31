@@ -407,25 +407,25 @@ def add_meme(data, author):
 def delete_all_messages():
     conn = psycopg2.connect(DATABASE_URL)
     cursor = conn.cursor()
-    cursor.execute('DELETE FROM game_announcement WHERE status=1')
+    cursor.execute('DELETE FROM game_announcement WHERE status=%s', ('true', ))
     conn.commit()
     conn.close()
 
     conn = psycopg2.connect(DATABASE_URL)
     cursor = conn.cursor()
-    cursor.execute('DELETE FROM history WHERE status=1')
+    cursor.execute('DELETE FROM history WHERE status=%s', ('true', ))
     conn.commit()
     conn.close()
 
     conn = psycopg2.connect(DATABASE_URL)
     cursor = conn.cursor()
-    cursor.execute('DELETE FROM ideas WHERE status=1')
+    cursor.execute('DELETE FROM ideas WHERE status=%s', ('true', ))
     conn.commit()
     conn.close()
 
     conn = psycopg2.connect(DATABASE_URL)
     cursor = conn.cursor()
-    cursor.execute('DELETE FROM memes WHERE status=1')
+    cursor.execute('DELETE FROM memes WHERE status=%s', ('true', ))
     conn.commit()
     conn.close()
 
@@ -556,12 +556,6 @@ def view_messages(message, argument):
                            types.KeyboardButton('Просмотренные сообщения'))
                 bot.send_message(message.chat.id, text='Реши, что будешь делать :)', reply_markup=markup)
                 bot.register_next_step_handler(message, admin_actions)
-            elif message.text == 'Удалить все просмотренные сообщения':
-                markup.add(types.KeyboardButton('Да!'),
-                           types.KeyboardButton('Неть ☺️'))
-                bot.send_message(message.chat.id, text='Ты правда хочешь удалить все просмотренные сообщения?',
-                                 reply_markup=markup)
-                bot.register_next_step_handler(message, delete_messages)
             elif argument is True:
                 if message.text == 'Анонсы игр':
                     announcements = get_announcements(argument)
@@ -633,6 +627,12 @@ def view_messages(message, argument):
                                 bot.register_next_step_handler(message, delete_or_not)
                             else:
                                 bot.send_photo(message.chat.id, photo, text)
+                elif message.text == 'Удалить все просмотренные сообщения':
+                    markup.add(types.KeyboardButton('Да!'),
+                               types.KeyboardButton('Неть ☺️'))
+                    bot.send_message(message.chat.id, text='Ты правда хочешь удалить все просмотренные сообщения?',
+                                     reply_markup=markup)
+                    bot.register_next_step_handler(message, delete_messages)
                 else:
                     markup.add(types.KeyboardButton('Анонсы игр'), types.KeyboardButton('Ролевые истории'),
                                types.KeyboardButton('Идеи для развития сообщества'),
