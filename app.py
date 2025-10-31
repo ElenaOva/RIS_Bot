@@ -8,6 +8,7 @@ import telebot
 from telebot import types
 import os
 from flask import Flask, request
+from psycopg2 import sql
 
 
 TOKEN = os.getenv("BOT_TOKEN")
@@ -433,7 +434,8 @@ def delete_all_messages():
 def delete_some_messages(argument):
     conn = psycopg2.connect(DATABASE_URL)
     cursor = conn.cursor()
-    cursor.execute('SELECT id FROM %s', (argument, ))
+    query = sql.SQL('SELECT id FROM {}').format(sql.Identifier(argument))
+    cursor.execute(query)
     list_id = cursor.fetchall()
     print(f'list_id = {list_id}')
     conn.close()
@@ -441,7 +443,8 @@ def delete_some_messages(argument):
     if len(list_id) != 0:
         conn = psycopg2.connect(DATABASE_URL)
         cursor = conn.cursor()
-        cursor.execute('DELETE FROM %s WHERE status=%s', (argument, 'true', ))
+        query = sql.SQL("DELETE FROM {} WHERE status = %s").format(sql.Identifier(argument))
+        cursor.execute(query, ('true',))
         conn.commit()
         conn.close()
 
