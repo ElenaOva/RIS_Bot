@@ -67,20 +67,20 @@ def get_example_meme():
 
 
 def get_announcements(argument):
-    conn = psycopg2.connect(DATABASE_URL)
-    cursor = conn.cursor()
-    cursor.execute(
-        'SELECT game_announcement.name, game_announcement.announcement FROM game_announcement WHERE status IS NULL')
-    announcements = cursor.fetchall()
-    print(f'announcements = {announcements}, {type(announcements)}')
-    conn.close()
-
     if argument is None:
-        if len(announcements) == 0:
+        conn = psycopg2.connect(DATABASE_URL)
+        cursor = conn.cursor()
+        cursor.execute(
+            'SELECT game_announcement.name, game_announcement.announcement FROM game_announcement WHERE status IS NULL')
+        announcements_status_none = cursor.fetchall()
+        print(f'announcements = {announcements_status_none}, {type(announcements_status_none)}')
+        conn.close()
+
+        if len(announcements_status_none) == 0:
             return 'Новых анонсов от игроков нет 😌'
         else:
             result = []
-            for text in announcements:
+            for text in announcements_status_none:
                 master = text[0]
                 text_announcement = text[1]
                 new_text = f'Мастер: @{master}\n{text_announcement}'
@@ -96,11 +96,19 @@ def get_announcements(argument):
             return result
 
     elif argument is True:
-        if len(announcements) == 0:
-            return 'Анонсов от игроков пока нет 😌'
+        conn = psycopg2.connect(DATABASE_URL)
+        cursor = conn.cursor()
+        cursor.execute(
+            'SELECT game_announcement.name, game_announcement.announcement FROM game_announcement WHERE status = TRUE')
+        announcements_status_true = cursor.fetchall()
+        print(f'announcements = {announcements_status_true}, {type(announcements_status_true)}')
+        conn.close()
+
+        if len(announcements_status_true) == 0:
+            return 'У вас нет прочитанных анонсов 😌'
         else:
             result = []
-            for text in announcements:
+            for text in announcements_status_true:
                 master = text[0]
                 text_announcement = text[1]
                 new_text = f'Мастер: @{master}\n{text_announcement}'
@@ -109,19 +117,19 @@ def get_announcements(argument):
 
 
 def get_stories(argument):
-    conn = psycopg2.connect(DATABASE_URL)
-    cursor = conn.cursor()
-    cursor.execute(
-        'SELECT history.author, history.text FROM history WHERE status IS NULL')
-    stories = cursor.fetchall()
-    conn.close()
-
     if argument is None:
-        if len(stories) == 0:
+        conn = psycopg2.connect(DATABASE_URL)
+        cursor = conn.cursor()
+        cursor.execute(
+            'SELECT history.author, history.text FROM history WHERE status IS NULL')
+        stories_status_none = cursor.fetchall()
+        conn.close()
+
+        if len(stories_status_none) == 0:
             return 'Новых историй от игроков нет 😌'
         else:
             result = []
-            for text in stories:
+            for text in stories_status_none:
                 author = text[0]
                 text_story = text[1]
                 if author != 'автор пожелал остаться анонимным 😌':
@@ -140,11 +148,18 @@ def get_stories(argument):
             return result
 
     elif argument is True:
-        if len(stories) == 0:
-            return 'Историй от игроков пока нет 😌'
+        conn = psycopg2.connect(DATABASE_URL)
+        cursor = conn.cursor()
+        cursor.execute(
+            'SELECT history.author, history.text FROM history WHERE status = TRUE')
+        stories_status_true = cursor.fetchall()
+        conn.close()
+
+        if len(stories_status_true) == 0:
+            return 'У вас нет прочитанных историй 😌'
         else:
             result = []
-            for text in stories:
+            for text in stories_status_true:
                 author = text[0]
                 text_story = text[1]
                 if author != 'автор пожелал остаться анонимным 😌':
@@ -157,19 +172,19 @@ def get_stories(argument):
 
 
 def get_ideas(argument):
-    conn = psycopg2.connect(DATABASE_URL)
-    cursor = conn.cursor()
-    cursor.execute(
-        'SELECT ideas.author, ideas.idea FROM ideas WHERE status IS NULL')
-    ideas = cursor.fetchall()
-    conn.close()
-
     if argument is None:
-        if len(ideas) == 0:
+        conn = psycopg2.connect(DATABASE_URL)
+        cursor = conn.cursor()
+        cursor.execute(
+            'SELECT ideas.author, ideas.idea FROM ideas WHERE status IS NULL')
+        ideas_status_none = cursor.fetchall()
+        conn.close()
+
+        if len(ideas_status_none) == 0:
             return 'Новых идей от игроков нет 😌'
         else:
             result = []
-            for elem in ideas:
+            for elem in ideas_status_none:
                 author = elem[0]
                 text_idea = elem[1]
                 if author != 'автор пожелал остаться анонимным 😌':
@@ -188,11 +203,18 @@ def get_ideas(argument):
             return result
 
     elif argument is True:
-        if len(ideas) == 0:
-            return 'Идей от игроков пока нет 😌'
+        conn = psycopg2.connect(DATABASE_URL)
+        cursor = conn.cursor()
+        cursor.execute(
+            'SELECT ideas.author, ideas.idea FROM ideas WHERE status = TRUE')
+        ideas_status_true = cursor.fetchall()
+        conn.close()
+
+        if len(ideas_status_true) == 0:
+            return 'У вас нет прочитанных идей 😌'
         else:
             result = []
-            for elem in ideas:
+            for elem in ideas_status_true:
                 author = elem[0]
                 text_idea = elem[1]
                 if author != 'автор пожелал остаться анонимным 😌':
@@ -205,20 +227,20 @@ def get_ideas(argument):
 
 
 def get_memes(argument):
-    conn = psycopg2.connect(DATABASE_URL)
-    cursor = conn.cursor()
-    cursor.execute(
-        'SELECT memes.author, memes.meme FROM memes WHERE status IS NULL')
-    memes = cursor.fetchall()
-    print(f'memes = {memes}')
-    conn.close()
-
     if argument is None:
-        if len(memes) == 0:
+        conn = psycopg2.connect(DATABASE_URL)
+        cursor = conn.cursor()
+        cursor.execute(
+            'SELECT memes.author, memes.meme FROM memes WHERE status IS NULL')
+        memes_status_none = cursor.fetchall()
+        print(f'memes = {memes_status_none}')
+        conn.close()
+
+        if len(memes_status_none) == 0:
             return 'Новых мемов от игроков нет 😌'
         else:
             result = []
-            for elem in memes:
+            for elem in memes_status_none:
                 new_list = []
                 author = elem[0]
                 photo = elem[1]
@@ -242,11 +264,19 @@ def get_memes(argument):
             return result
 
     elif argument is True:
-        if len(memes) == 0:
-            return 'Мемов от игроков пока нет 😌'
+        conn = psycopg2.connect(DATABASE_URL)
+        cursor = conn.cursor()
+        cursor.execute(
+            'SELECT memes.author, memes.meme FROM memes WHERE status = TRUE')
+        memes_status_true = cursor.fetchall()
+        print(f'memes = {memes_status_true}')
+        conn.close()
+
+        if len(memes_status_true) == 0:
+            return 'У вас нет просмотренных мемов 😌'
         else:
             result = []
-            for elem in memes:
+            for elem in memes_status_true:
                 new_list = []
                 author = elem[0]
                 photo = elem[1]
