@@ -493,11 +493,11 @@ def help_me(message):
 @bot.message_handler(content_types=['text', 'photo'])
 def handle_error(message):
     bot.send_message(message.chat.id,
-                     text='*СЛИШКОМ МНОГО БУКВ 😳😳😳\nВОЗМОЖНО, ТЫ ВВЕЛ БОЛЬШОЙ ТЕКСТ И ТЕЛЕГРАММ АВТОМАТИЧЕСКИ'
-                          ' РАЗДЕЛИЛ ЕГО НА НЕСКОЛЬКО ЧАСТЕЙ, ТАК КАК У ТЕЛЕГРАММА ЕСТЬ СВОИ ОГРАНИЧЕНИЯ ПО'
-                          ' КОЛИЧЕСТВУ СИМВОЛОВ В ПОСТЕ.\nВЕРНИСЬ В САМОЕ НАЧАЛО ПРИ ПОМОЩИ КОМАНДЫ "start" В СИНЕЙ'
-                          ' ПЛАШКЕ МЕНЮ, ЗАПОЛНИ ВСЁ ЗАНОВО С УЧЁТОМ СОКРАЩЁННОГО ТЕКСТА :)\nВ ПРОТИВНОМ СЛУЧАЕ АДМИН'
-                          ' ПОЛУЧИТ ЛИШЬ ЧАСТЬ ТВОЕГО ТЕКСТА 😕*'
+                     text='*СЛУЧИЛОСЬ ЧТО-ТО НЕПОНЯТНОЕ И БОТ СЛОМАЛСЯ 😳😳😳\nВОЗМОЖНО, ТЫ ВВЕЛ БОЛЬШОЙ ТЕКСТ И '
+                          'ТЕЛЕГРАММ АВТОМАТИЧЕСКИ РАЗДЕЛИЛ ЕГО НА НЕСКОЛЬКО ЧАСТЕЙ, ТАК КАК У ТЕЛЕГРАММА ЕСТЬ СВОИ '
+                          'ОГРАНИЧЕНИЯ ПО КОЛИЧЕСТВУ СИМВОЛОВ В ПОСТЕ.\nВЕРНИСЬ В САМОЕ НАЧАЛО ПРИ ПОМОЩИ КОМАНДЫ '
+                          '"start" В СИНЕЙ ПЛАШКЕ МЕНЮ, ЗАПОЛНИ ВСЁ ЗАНОВО С УЧЁТОМ СОКРАЩЁННОГО ТЕКСТА :)\n'
+                          'В ПРОТИВНОМ СЛУЧАЕ АДМИН ПОЛУЧИТ ЛИШЬ ЧАСТЬ ТВОЕГО ТЕКСТА 😕*'
                      .format(message.from_user), parse_mode='Markdown')
     # bot.register_next_step_handler(message, start)
 
