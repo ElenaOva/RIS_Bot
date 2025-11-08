@@ -918,7 +918,7 @@ def user_actions(message):
                 else:
                     if message.text == 'Прислать новость 📝':
                         markup.add(types.KeyboardButton('Прислать анонс своей игры 🎭'),
-                                   types.KeyboardButton('Прислать офигительную историю из своей ролевой жизни 🌚'),
+                                   types.KeyboardButton('Прислать историю из ролевой жизни 🌚'),
                                    types.KeyboardButton('Прислать идею для развития ролевого движения в Сербии 🍷'),
                                    types.KeyboardButton('Вернуться в главное меню'))
                         bot.send_message(message.chat.id,
@@ -935,8 +935,8 @@ def user_actions(message):
                         bot.send_photo(message.chat.id, picture, text)
                         bot.send_message(message.chat.id,
                                          text='Загрузи свой мем :) Просто прикрепи изображение '
-                                              ':)\nЕсли передумал, то вернись в главное меню :)'.format(message.from_user),
-                                         reply_markup=markup)
+                                              ':)\nЕсли передумал, то вернись в главное меню '
+                                              ':)'.format(message.from_user), reply_markup=markup)
                         bot.register_next_step_handler(message, send_meme)
                     else:
                         markup.add(types.KeyboardButton('Прислать новость 📝'),
@@ -986,24 +986,26 @@ def send_news(message):
                                          format(message.from_user), reply_markup=markup, )
                         bot.register_next_step_handler(message, announcement)
 
-                    elif message.text == 'Прислать офигительную историю из своей ролевой жизни 🌚':
+                    elif message.text == 'Прислать историю из ролевой жизни 🌚':
                         markup.add(types.KeyboardButton('Пусть все знают моё имя! 💃'),
-                                   types.KeyboardButton('Нет, я стесняшка, хочу быть анонимным 👀'),
+                                   types.KeyboardButton('Хочу быть анонимным 👀'),
                                    types.KeyboardButton('Вернуться в главное меню'))
-                        bot.send_message(message.chat.id, text='Для начала уточним, хочешь ли ты остаться анонимным или '
-                                                               'пусть все знают автора истории? 😏', reply_markup=markup)
+                        bot.send_message(message.chat.id, text='Для начала уточним, хочешь ли ты остаться анонимным '
+                                                               'или пусть все знают автора истории? 😏', 
+                                         reply_markup=markup)
                         bot.register_next_step_handler(message, history)
 
                     elif message.text == 'Прислать идею для развития ролевого движения в Сербии 🍷':
                         markup.add(types.KeyboardButton('Пусть все знают моё имя! 💃'),
-                                   types.KeyboardButton('Нет, я стесняшка, хочу быть анонимным 👀'),
+                                   types.KeyboardButton('Хочу быть анонимным 👀'),
                                    types.KeyboardButton('Вернуться в главное меню'))
-                        bot.send_message(message.chat.id, text='Для начала уточним, хочешь ли ты остаться анонимным или '
-                                                               'пусть все знают автора идеи? 😏', reply_markup=markup)
+                        bot.send_message(message.chat.id, text='Для начала уточним, хочешь ли ты остаться '
+                                                               'анонимным или пусть все знают автора идеи? 😏', 
+                                         reply_markup=markup)
                         bot.register_next_step_handler(message, idea)
                     else:
                         markup.add(types.KeyboardButton('Прислать анонс своей игры 🎭'),
-                                   types.KeyboardButton('Прислать офигительную историю из своей ролевой жизни 🌚'),
+                                   types.KeyboardButton('Прислать историю из ролевой жизни 🌚'),
                                    types.KeyboardButton('Прислать идею для развития ролевого движения в Сербии 🍷'),
                                    types.KeyboardButton('Вернуться в главное меню'))
                         bot.send_message(message.chat.id,
@@ -1013,7 +1015,7 @@ def send_news(message):
                         bot.register_next_step_handler(message, send_news)
             else:
                 markup.add(types.KeyboardButton('Прислать анонс своей игры 🎭'),
-                           types.KeyboardButton('Прислать офигительную историю из своей ролевой жизни 🌚'),
+                           types.KeyboardButton('Прислать историю из ролевой жизни 🌚'),
                            types.KeyboardButton('Прислать идею для развития ролевого движения в Сербии 🍷'),
                            types.KeyboardButton('Вернуться в главное меню'))
                 bot.send_message(message.chat.id,
@@ -1047,8 +1049,8 @@ def send_meme(message):
                     markup.add(types.KeyboardButton('Вернуться в главное меню'))
                     bot.send_message(message.chat.id,
                                      text='{0.first_name}, ты что-то не то нажимаешь😌 или не отправляешь нам свои '
-                                          'мемы😐\nЗагрузи свой мем (просто картинкой! не файлом!) или вернись в главное '
-                                          'меню :)'.format(message.from_user), reply_markup=markup)
+                                          'мемы😐\nЗагрузи свой мем (просто картинкой! не файлом!) или вернись в '
+                                          'главное меню :)'.format(message.from_user), reply_markup=markup)
                     bot.register_next_step_handler(message, send_meme)
                 elif content_type == 'photo':
                     markup.add(types.KeyboardButton('Прислать новость 📝'),
@@ -1059,8 +1061,8 @@ def send_meme(message):
                     photo = message.photo[-1]
                     add_meme(photo.file_id, username)
                     bot.send_message(message.chat.id,
-                                     text='Урааа! В нашей коллекции на один мем больше 😍😍😍\nСкоро админ посмотрит его '
-                                          'и, возможно, поделится мемом в общей группе 😌\n'
+                                     text='Урааа! В нашей коллекции на один мем больше 😍😍😍\nСкоро админ посмотрит '
+                                          'его и, возможно, поделится мемом в общей группе 😌\n'
                                           'Реши, что хочешь сделать дальше :)',
                                      reply_markup=markup)
                     bot.register_next_step_handler(message, user_actions)
@@ -1138,8 +1140,8 @@ def send_announcement(message):
                     bot.register_next_step_handler(message, user_actions)
                 else:
                     add_announcement(message.text, username)
-                    markup.add(types.KeyboardButton('Всё круто, отправить анонс админу 💃'),
-                               types.KeyboardButton('Нет, поправлю немного 👀'),
+                    markup.add(types.KeyboardButton('Отправить анонс админу 💃'),
+                               types.KeyboardButton('Напишу новый анонс 👀'),
                                types.KeyboardButton('Передумал отправлять анонс 🌚'))
                     bot.send_message(message.chat.id, text='{0.first_name}, ещё раз прочитай и проверь свой '
                                                            'анонс 😌'.format(message.from_user))
@@ -1169,7 +1171,7 @@ def finally_send_announcement(message):
                 elif message.text == '/help_me':
                     delete_announcement()
                     help_me(message)
-                elif message.text == 'Всё круто, отправить анонс админу 💃':
+                elif message.text == 'Отправить анонс админу 💃':
                     bot.send_message(message.chat.id, text='Анонс твоей игры отправлен админу :)\nЕсли у админа '
                                                            'возникнут вопросы по твоей игре - он тебе напишет :)')
                     markup.add(types.KeyboardButton('Прислать новость 📝'),
@@ -1177,7 +1179,7 @@ def finally_send_announcement(message):
                     bot.send_message(message.chat.id, text="{0.first_name}, реши, что хочешь сделать :)"
                                      .format(message.from_user), reply_markup=markup)
                     bot.register_next_step_handler(message, user_actions)
-                elif message.text == 'Нет, поправлю немного 👀':
+                elif message.text == 'Напишу новый анонс 👀':
                     delete_announcement()
                     markup.add(types.KeyboardButton('Вернуться в главное меню'))
                     bot.send_message(message.chat.id, text='Отправь новый анонс своей игры :)'.
@@ -1191,16 +1193,16 @@ def finally_send_announcement(message):
                                      .format(message.from_user), reply_markup=markup)
                     bot.register_next_step_handler(message, user_actions)
                 else:
-                    markup.add(types.KeyboardButton('Всё круто, отправить анонс админу 💃'),
-                               types.KeyboardButton('Нет, поправлю немного 👀'),
+                    markup.add(types.KeyboardButton('Отправить анонс админу 💃'),
+                               types.KeyboardButton('Напишу новый анонс 👀'),
                                types.KeyboardButton('Передумал отправлять анонс 🌚'))
                     bot.send_message(message.chat.id,
                                      text='{0.first_name}, ты что-то не то нажимаешь😌 \nВыбери один из этих вариантов, '
                                           'что делать с твоим анонсом :)'.format(message.from_user), reply_markup=markup)
                     bot.register_next_step_handler(message, finally_send_announcement)
             else:
-                markup.add(types.KeyboardButton('Всё круто, отправить анонс админу 💃'),
-                           types.KeyboardButton('Нет, поправлю немного 👀'),
+                markup.add(types.KeyboardButton('Отправить анонс админу 💃'),
+                           types.KeyboardButton('Напишу новый анонс 👀'),
                            types.KeyboardButton('Передумал отправлять анонс 🌚'))
                 bot.send_message(message.chat.id,
                                  text='{0.first_name}, ты что-то не то нажимаешь😌 или шлешь нам картинки вместо текста '
@@ -1230,20 +1232,20 @@ def history(message):
                 elif message.text == 'Пусть все знают моё имя! 💃':
                     markup.add(types.KeyboardButton('Вернуться в главное меню'))
                     bot.send_message(message.chat.id,
-                                     text='{0.first_name}, хорошо!\nНапиши сюда то, чем хочешь поделиться с сообществом '
-                                          'ролевиков ☺️\nМожет твоя история появится в группе или ляжет в основу новой '
-                                          'игры ☺️'.format(message.from_user), reply_markup=markup)
+                                     text='{0.first_name}, хорошо!\nНапиши сюда то, чем хочешь поделиться '
+                                          'с сообществом ролевиков ☺️\nМожет твоя история появится в группе или ляжет '
+                                          'в основу новой игры ☺️'.format(message.from_user), reply_markup=markup)
                     bot.register_next_step_handler(message, send_history)
-                elif message.text == 'Нет, я стесняшка, хочу быть анонимным 👀':
+                elif message.text == 'Хочу быть анонимным 👀':
                     markup.add(types.KeyboardButton('Вернуться в главное меню'))
                     bot.send_message(message.chat.id,
-                                     text='{0.first_name}, хорошо!\nНапиши сюда то, чем хочешь поделиться с сообществом '
-                                          'ролевиков ☺️\nМожет твоя история появится в группе или ляжет в основу новой '
-                                          'игры ☺️'.format(message.from_user), reply_markup=markup)
+                                     text='{0.first_name}, хорошо!\nНапиши сюда то, чем хочешь поделиться с '
+                                          'сообществом ролевиков ☺️\nМожет твоя история появится в группе или ляжет '
+                                          'в основу новой игры ☺️'.format(message.from_user), reply_markup=markup)
                     bot.register_next_step_handler(message, send_history_anonymous)
                 else:
                     markup.add(types.KeyboardButton('Пусть все знают моё имя! 💃'),
-                               types.KeyboardButton('Нет, я стесняшка, хочу быть анонимным 👀'),
+                               types.KeyboardButton('Хочу быть анонимным 👀'),
                                types.KeyboardButton('Вернуться в главное меню'))
                     bot.send_message(message.chat.id, text='И всё-таки давай сначала решим, хочешь ли ты остаться '
                                                            'анонимным или пусть все знают автора истории? 😏',
@@ -1251,11 +1253,11 @@ def history(message):
                     bot.register_next_step_handler(message, history)
             else:
                 markup.add(types.KeyboardButton('Пусть все знают моё имя! 💃'),
-                           types.KeyboardButton('Нет, я стесняшка, хочу быть анонимным 👀'),
+                           types.KeyboardButton('Хочу быть анонимным 👀'),
                            types.KeyboardButton('Вернуться в главное меню'))
                 bot.send_message(message.chat.id,
-                                 text='{0.first_name}, ты что-то не то нажимаешь😌 или шлешь нам картинки вместо ответа на '
-                                      'вопросы 🙃\nРеши, хочешь ли ты прислать историю анонимно или нет :)\n'
+                                 text='{0.first_name}, ты что-то не то нажимаешь😌 или шлешь нам картинки вместо '
+                                      'ответа на вопросы 🙃\nРеши, хочешь ли ты прислать историю анонимно или нет :)\n'
                                       'Или вернись в главное меню'.format(message.from_user),
                                  reply_markup=markup)
                 bot.register_next_step_handler(message, history)
@@ -1281,8 +1283,8 @@ def send_history(message):
                     bot.register_next_step_handler(message, user_actions)
                 else:
                     add_history(message.text, username, 'identified')
-                    markup.add(types.KeyboardButton('Всё круто, отправить историю админу 💃'),
-                               types.KeyboardButton('Нет, поправлю немного 👀'),
+                    markup.add(types.KeyboardButton('Отправить историю админу 💃'),
+                               types.KeyboardButton('Напишу новую историю 👀'),
                                types.KeyboardButton('Передумал отправлять историю 🌚'))
                     bot.send_message(message.chat.id, text='{0.first_name}, ещё раз прочитай и проверь свою историю '
                                                            '😌'.format(message.from_user))
@@ -1317,8 +1319,8 @@ def send_history_anonymous(message):
                     bot.register_next_step_handler(message, user_actions)
                 else:
                     add_history(message.text, username, 'anonymous')
-                    markup.add(types.KeyboardButton('Всё круто, отправить историю админу 💃'),
-                               types.KeyboardButton('Нет, поправлю немного 👀'),
+                    markup.add(types.KeyboardButton('Отправить историю админу 💃'),
+                               types.KeyboardButton('Напишу новую историю 👀'),
                                types.KeyboardButton('Передумал отправлять историю 🌚'))
                     bot.send_message(message.chat.id, text='{0.first_name}, ещё раз прочитай и проверь свою историю '
                                                            '😌'.format(message.from_user))
@@ -1327,8 +1329,8 @@ def send_history_anonymous(message):
             else:
                 markup.add(types.KeyboardButton('Вернуться в главное меню'))
                 bot.send_message(message.chat.id,
-                                 text='{0.first_name}, ты что-то не то нажимаешь😌 или шлешь нам картинки вместо текста '
-                                      'истории 🙃\nНапиши свою историю или вернись в главное меню '
+                                 text='{0.first_name}, ты что-то не то нажимаешь😌 или шлешь нам картинки вместо '
+                                      'текста истории 🙃\nНапиши свою историю или вернись в главное меню '
                                       ':)'.format(message.from_user), reply_markup=markup)
                 bot.register_next_step_handler(message, send_history_anonymous)
         else:
@@ -1348,7 +1350,7 @@ def finally_send_history(message):
                 elif message.text == '/help_me':
                     delete_history()
                     help_me(message)
-                elif message.text == 'Всё круто, отправить историю админу 💃':
+                elif message.text == 'Отправить историю админу 💃':
                     bot.send_message(message.chat.id, text='Твоя история отправлена админу :)\nЕсли у админа '
                                                            'возникнут вопросы - он тебе напишет :)')
                     markup.add(types.KeyboardButton('Прислать новость 📝'),
@@ -1356,10 +1358,10 @@ def finally_send_history(message):
                     bot.send_message(message.chat.id, text="{0.first_name}, реши, что хочешь сделать :)"
                                      .format(message.from_user), reply_markup=markup)
                     bot.register_next_step_handler(message, user_actions)
-                elif message.text == 'Нет, поправлю немного 👀':
+                elif message.text == 'Напишу новую историю 👀':
                     delete_history()
                     markup.add(types.KeyboardButton('Пусть все знают моё имя! 💃'),
-                               types.KeyboardButton('Нет, я стесняшка, хочу быть анонимным 👀'),
+                               types.KeyboardButton('Хочу быть анонимным 👀'),
                                types.KeyboardButton('Вернуться в главное меню'))
                     bot.send_message(message.chat.id, text='Напомни, пожалуйста, хочешь ли ты остаться анонимным или '
                                                            'пусть все знают автора истории? 😏', reply_markup=markup)
@@ -1372,20 +1374,21 @@ def finally_send_history(message):
                                      .format(message.from_user), reply_markup=markup)
                     bot.register_next_step_handler(message, user_actions)
                 else:
-                    markup.add(types.KeyboardButton('Всё круто, отправить историю админу 💃'),
-                               types.KeyboardButton('Нет, поправлю немного 👀'),
+                    markup.add(types.KeyboardButton('Отправить историю админу 💃'),
+                               types.KeyboardButton('Напишу новую историю 👀'),
                                types.KeyboardButton('Передумал отправлять историю 🌚'))
                     bot.send_message(message.chat.id,
                                      text='{0.first_name}, ты что-то не то нажимаешь😌 \nВыбери один из этих вариантов, '
-                                          'что делать с твоей историей :)'.format(message.from_user), reply_markup=markup)
+                                          'что делать с твоей историей :)'.format(message.from_user), 
+                                     reply_markup=markup)
                     bot.register_next_step_handler(message, finally_send_history)
             else:
-                markup.add(types.KeyboardButton('Всё круто, отправить историю админу 💃'),
-                           types.KeyboardButton('Нет, поправлю немного 👀'),
+                markup.add(types.KeyboardButton('Отправить историю админу 💃'),
+                           types.KeyboardButton('Напишу новую историю 👀'),
                            types.KeyboardButton('Передумал отправлять историю 🌚'))
                 bot.send_message(message.chat.id,
-                                 text='{0.first_name}, ты что-то не то нажимаешь или шлешь нам картинки вместо текста 😌'
-                                      '\nВыбери один из этих вариантов, что делать с твоей историей '
+                                 text='{0.first_name}, ты что-то не то нажимаешь или шлешь нам картинки вместо '
+                                      'текста 😌\nВыбери один из этих вариантов, что делать с твоей историей '
                                       ':)'.format(message.from_user), reply_markup=markup)
                 bot.register_next_step_handler(message, finally_send_history)
         else:
@@ -1413,26 +1416,26 @@ def idea(message):
                     bot.send_message(message.chat.id,
                                      text='{0.first_name}, хорошо!\nНапиши сюда свои мысли и идеи, что бы ты хотел '
                                           'улучшить/предложить нового для развития ролевого движения или для '
-                                          'развития этого канала ☺️\nАдмин прочитает и, если его заинтересует твоя идея, '
-                                          'свяжется с тобой для уточнения подробностей, если ты указал свой '
+                                          'развития этого канала ☺️\nАдмин прочитает и, если его заинтересует твоя '
+                                          'идея, свяжется с тобой для уточнения подробностей, если ты указал свой '
                                           'контакт :)\nИ давай сразу договоримся, что админ по своему желанию может '
-                                          'использовать или не использовать твои идеи и что ты делишься ими безвозмездно '
-                                          '☺️'.format(message.from_user), reply_markup=markup)
+                                          'использовать или не использовать твои идеи и что ты делишься ими '
+                                          'безвозмездно ☺️'.format(message.from_user), reply_markup=markup)
                     bot.register_next_step_handler(message, send_idea)
-                elif message.text == 'Нет, я стесняшка, хочу быть анонимным 👀':
+                elif message.text == 'Хочу быть анонимным 👀':
                     markup.add(types.KeyboardButton('Вернуться в главное меню'))
                     bot.send_message(message.chat.id,
                                      text='{0.first_name}, хорошо!\nНапиши сюда свои мысли и идеи, что бы ты хотел '
                                           'улучшить/предложить нового для развития ролевого движения или для '
-                                          'развития этого канала ☺️\nАдмин прочитает и, если его заинтересует твоя идея, '
-                                          'свяжется с тобой для уточнения подробностей, если ты указал свой '
+                                          'развития этого канала ☺️\nАдмин прочитает и, если его заинтересует твоя '
+                                          'идея, свяжется с тобой для уточнения подробностей, если ты указал свой '
                                           'контакт :)\nИ давай сразу договоримся, что админ по своему желанию может '
-                                          'использовать или не использовать твои идеи и что ты делишься ими безвозмездно '
-                                          '☺️'.format(message.from_user), reply_markup=markup)
+                                          'использовать или не использовать твои идеи и что ты делишься ими '
+                                          'безвозмездно ☺️'.format(message.from_user), reply_markup=markup)
                     bot.register_next_step_handler(message, send_idea_anonymous)
                 else:
                     markup.add(types.KeyboardButton('Пусть все знают моё имя! 💃'),
-                               types.KeyboardButton('Нет, я стесняшка, хочу быть анонимным 👀'),
+                               types.KeyboardButton('Хочу быть анонимным 👀'),
                                types.KeyboardButton('Вернуться в главное меню'))
                     bot.send_message(message.chat.id, text='И всё-таки давай сначала решим, хочешь ли ты остаться '
                                                            'анонимным или нет? 😏',
@@ -1440,12 +1443,12 @@ def idea(message):
                     bot.register_next_step_handler(message, idea)
             else:
                 markup.add(types.KeyboardButton('Пусть все знают моё имя! 💃'),
-                           types.KeyboardButton('Нет, я стесняшка, хочу быть анонимным 👀'),
+                           types.KeyboardButton('Хочу быть анонимным 👀'),
                            types.KeyboardButton('Вернуться в главное меню'))
                 bot.send_message(message.chat.id,
-                                 text='{0.first_name}, ты что-то не то нажимаешь😌 или шлешь нам картинки вместо ответа на '
-                                      'вопросы 🙃\nРеши, хочешь ли ты прислать свои идеи анонимно или нет :)\n'
-                                      'Или вернись в главное меню'.format(message.from_user),
+                                 text='{0.first_name}, ты что-то не то нажимаешь😌 или шлешь нам картинки вместо '
+                                      'ответа на вопросы 🙃\nРеши, хочешь ли ты прислать свои идеи анонимно или '
+                                      'нет :)\nИли вернись в главное меню'.format(message.from_user),
                                  reply_markup=markup)
                 bot.register_next_step_handler(message, idea)
         else:
@@ -1470,8 +1473,8 @@ def send_idea(message):
                     bot.register_next_step_handler(message, user_actions)
                 else:
                     add_idea(message.text, username, 'identified')
-                    markup.add(types.KeyboardButton('Всё круто, отправить идеи админу 💃'),
-                               types.KeyboardButton('Нет, поправлю немного 👀'),
+                    markup.add(types.KeyboardButton('Отправить идеи админу 💃'),
+                               types.KeyboardButton('Напишу новые идеи 👀'),
                                types.KeyboardButton('Передумал отправлять идеи 🌚'))
                     bot.send_message(message.chat.id, text='{0.first_name}, ещё раз прочитай и проверь свою идеи '
                                                            '😌'.format(message.from_user))
@@ -1480,8 +1483,8 @@ def send_idea(message):
             else:
                 markup.add(types.KeyboardButton('Вернуться в главное меню'))
                 bot.send_message(message.chat.id,
-                                 text='{0.first_name}, ты что-то не то нажимаешь😌 или шлешь нам картинки вместо своих '
-                                      'идей 🙃\nНапиши свою идеи или вернись в главное меню '
+                                 text='{0.first_name}, ты что-то не то нажимаешь😌 или шлешь нам картинки вместо '
+                                      'своих идей 🙃\nНапиши свою идеи или вернись в главное меню '
                                       ':)'.format(message.from_user), reply_markup=markup)
                 bot.register_next_step_handler(message, send_idea)
         else:
@@ -1506,8 +1509,8 @@ def send_idea_anonymous(message):
                     bot.register_next_step_handler(message, user_actions)
                 else:
                     add_idea(message.text, username, 'anonymous')
-                    markup.add(types.KeyboardButton('Всё круто, отправить идеи админу 💃'),
-                               types.KeyboardButton('Нет, поправлю немного 👀'),
+                    markup.add(types.KeyboardButton('Отправить идеи админу 💃'),
+                               types.KeyboardButton('Напишу новые идеи 👀'),
                                types.KeyboardButton('Передумал отправлять идеи 🌚'))
                     bot.send_message(message.chat.id, text='{0.first_name}, ещё раз прочитай и проверь свою идеи '
                                                            '😌'.format(message.from_user))
@@ -1516,8 +1519,8 @@ def send_idea_anonymous(message):
             else:
                 markup.add(types.KeyboardButton('Вернуться в главное меню'))
                 bot.send_message(message.chat.id,
-                                 text='{0.first_name}, ты что-то не то нажимаешь😌 или шлешь нам картинки вместо своих '
-                                      'идей 🙃\nНапиши свою идеи или вернись в главное меню '
+                                 text='{0.first_name}, ты что-то не то нажимаешь😌 или шлешь нам картинки вместо '
+                                      'своих идей 🙃\nНапиши свою идеи или вернись в главное меню '
                                       ':)'.format(message.from_user), reply_markup=markup)
                 bot.register_next_step_handler(message, send_idea_anonymous)
         else:
@@ -1537,7 +1540,7 @@ def finally_send_idea(message):
                 elif message.text == '/help_me':
                     delete_idea()
                     help_me(message)
-                elif message.text == 'Всё круто, отправить идеи админу 💃':
+                elif message.text == 'Отправить идеи админу 💃':
                     bot.send_message(message.chat.id, text='Твои идеи отправлены админу :)\nЕсли у админа '
                                                            'возникнут вопросы - он тебе напишет :)')
                     markup.add(types.KeyboardButton('Прислать новость 📝'),
@@ -1545,10 +1548,10 @@ def finally_send_idea(message):
                     bot.send_message(message.chat.id, text="{0.first_name}, реши, что хочешь сделать :)"
                                      .format(message.from_user), reply_markup=markup)
                     bot.register_next_step_handler(message, user_actions)
-                elif message.text == 'Нет, поправлю немного 👀':
+                elif message.text == 'Напишу новые идеи 👀':
                     delete_idea()
                     markup.add(types.KeyboardButton('Пусть все знают моё имя! 💃'),
-                               types.KeyboardButton('Нет, я стесняшка, хочу быть анонимным 👀'),
+                               types.KeyboardButton('Хочу быть анонимным 👀'),
                                types.KeyboardButton('Вернуться в главное меню'))
                     bot.send_message(message.chat.id, text='Напомни, пожалуйста, хочешь ли ты остаться анонимным или '
                                                            'пусть все знают автора идеи? 😏', reply_markup=markup)
@@ -1561,20 +1564,21 @@ def finally_send_idea(message):
                                      .format(message.from_user), reply_markup=markup)
                     bot.register_next_step_handler(message, user_actions)
                 else:
-                    markup.add(types.KeyboardButton('Всё круто, отправить идеи админу 💃'),
-                               types.KeyboardButton('Нет, поправлю немного 👀'),
+                    markup.add(types.KeyboardButton('Отправить идеи админу 💃'),
+                               types.KeyboardButton('Напишу новые идеи 👀'),
                                types.KeyboardButton('Передумал отправлять идеи 🌚'))
                     bot.send_message(message.chat.id,
-                                     text='{0.first_name}, ты что-то не то нажимаешь😌 \nВыбери один из этих вариантов, '
-                                          'что делать с твоими идеями :)'.format(message.from_user), reply_markup=markup)
+                                     text='{0.first_name}, ты что-то не то нажимаешь😌 \nВыбери один из этих '
+                                          'вариантов, что делать с твоими идеями :)'.format(message.from_user),
+                                     reply_markup=markup)
                     bot.register_next_step_handler(message, finally_send_idea)
             else:
-                markup.add(types.KeyboardButton('Всё круто, отправить идеи админу 💃'),
-                           types.KeyboardButton('Нет, поправлю немного 👀'),
+                markup.add(types.KeyboardButton('Отправить идеи админу 💃'),
+                           types.KeyboardButton('Напишу новые идеи 👀'),
                            types.KeyboardButton('Передумал отправлять идеи 🌚'))
                 bot.send_message(message.chat.id,
-                                 text='{0.first_name}, ты что-то не то нажимаешь или шлешь нам картинки вместо текста 😌'
-                                      '\nВыбери один из этих вариантов, что делать с твоими идеями '
+                                 text='{0.first_name}, ты что-то не то нажимаешь или шлешь нам картинки вместо '
+                                      'текста 😌\nВыбери один из этих вариантов, что делать с твоими идеями '
                                       ':)'.format(message.from_user), reply_markup=markup)
                 bot.register_next_step_handler(message, finally_send_idea)
         else:
