@@ -1212,20 +1212,19 @@ def add_picture_announcement_yes_or_no(message):
                                types.KeyboardButton('Прислать мем 🦄'))
                     bot.send_message(message.chat.id, text="Реши, что хочешь сделать :)", reply_markup=markup)
                     bot.register_next_step_handler(message, user_actions)
-                else:
-                    if message.text == 'ДА':
-                        bot.send_message(message.chat.id, text='Загрузи заставку к своей игре в виде картинки :)',
-                                         reply_markup=markup)
-                        bot.register_next_step_handler(message, finally_add_picture_announcement)
-                    elif message.text == 'НЕТ':
-                        answer = show_announcement(username)
-                        bot.send_message(message.chat.id, answer, reply_markup=markup)
-                        markup.add(types.KeyboardButton('Отправить анонс админу 💃'),
-                                   types.KeyboardButton('Напишу новый анонс 👀'),
-                                   types.KeyboardButton('Передумал отправлять анонс 🌚'))
-                        bot.send_message(message.chat.id, text='{0.first_name}, ещё раз прочитай и проверь свой '
-                                                               'анонс 😌'.format(message.from_user))
-                        bot.register_next_step_handler(message, finally_send_announcement)
+                elif message.text == 'ДА':
+                    bot.send_message(message.chat.id, text='Загрузи заставку к своей игре в виде картинки :)',
+                                     reply_markup=markup)
+                    bot.register_next_step_handler(message, finally_add_picture_announcement)
+                elif message.text == 'НЕТ':
+                    answer = show_announcement(username)
+                    bot.send_message(message.chat.id, answer, reply_markup=markup)
+                    markup.add(types.KeyboardButton('Отправить анонс админу 💃'),
+                               types.KeyboardButton('Напишу новый анонс 👀'),
+                               types.KeyboardButton('Передумал отправлять анонс 🌚'))
+                    bot.send_message(message.chat.id, text='{0.first_name}, ещё раз прочитай и проверь свой '
+                                                           'анонс 😌'.format(message.from_user))
+                    bot.register_next_step_handler(message, finally_send_announcement)
             else:
                 markup.add(types.KeyboardButton('ДА'), types.KeyboardButton('НЕТ'),
                            types.KeyboardButton('Вернуться в главное меню'))
