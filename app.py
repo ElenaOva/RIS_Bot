@@ -307,6 +307,7 @@ def add_announcement(data, name):
 
 
 def add_picture_announcement_in_database(picture, username):
+    print('def add_picture_announcement_in_database(picture, username):')
     conn = psycopg2.connect(DATABASE_URL)
     cursor = conn.cursor()
     cursor.execute('UPDATE game_announcement SET picture=%s WHERE picture=%s AND username=%s',
@@ -1275,6 +1276,7 @@ def finally_add_picture_announcement(message):
                                      reply_markup=markup)
                     bot.register_next_step_handler(message, finally_add_picture_announcement)
                 elif content_type == 'photo':
+                    print('МЫ В ЗАСТАВКАЗХ')
                     photo = message.photo[-1]
                     add_picture_announcement_in_database(photo.file_id, username)
                     answer = show_announcement(username)
