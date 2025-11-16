@@ -1225,12 +1225,20 @@ def add_picture_announcement_yes_or_no(message):
                     bot.send_message(message.chat.id, text='{0.first_name}, ещё раз прочитай и проверь свой '
                                                            'анонс 😌'.format(message.from_user))
                     bot.register_next_step_handler(message, finally_send_announcement)
+                else:
+                    markup.add(types.KeyboardButton('ДА'), types.KeyboardButton('НЕТ'),
+                               types.KeyboardButton('Вернуться в главное меню'))
+                    bot.send_message(message.chat.id,
+                                     text='{0.first_name}, ты что-то не то нажимаешь🙃\nРеши, будешь ли ты добавлять '
+                                          'заставку к игре или нет :)\nИли вернись в главное '
+                                          'меню'.format(message.from_user), reply_markup=markup)
+                    bot.register_next_step_handler(message, add_picture_announcement_yes_or_no)
             else:
                 markup.add(types.KeyboardButton('ДА'), types.KeyboardButton('НЕТ'),
                            types.KeyboardButton('Вернуться в главное меню'))
                 bot.send_message(message.chat.id,
-                                 text='{0.first_name}, ты что-то не то нажимаешь🙃\nРеши, будешь ли ты добавлять '
-                                      'заставку к игре или нет :)\nИли вернись в главное '
+                                 text='{0.first_name}, ты что-то не то нажимаешь или шлешь нам картинки 🙃\nРеши, '
+                                      'будешь ли ты добавлять заставку к игре или нет :)\nИли вернись в главное '
                                       'меню'.format(message.from_user), reply_markup=markup)
                 bot.register_next_step_handler(message, add_picture_announcement_yes_or_no)
         else:
