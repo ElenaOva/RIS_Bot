@@ -1244,10 +1244,13 @@ def finally_add_picture_announcement(message):
         username = message.from_user.username
         if username not in admins:
             if message.text == '/start':
+                delete_announcement(username)
                 start(message)
             elif message.text == '/help_me':
+                delete_announcement(username)
                 help_me(message)
             elif message.text == 'Вернуться в главное меню':
+                delete_announcement(username)
                 markup.add(types.KeyboardButton('Прислать новость 📝'),
                            types.KeyboardButton('Прислать мем 🦄'))
                 bot.send_message(message.chat.id, text="Привет, {0.first_name}! Реши, что хочешь сделать :)"
