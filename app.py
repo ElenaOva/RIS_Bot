@@ -351,7 +351,7 @@ def show_announcement(username):
 def delete_announcement(username):
     conn = psycopg2.connect(DATABASE_URL)
     cursor = conn.cursor()
-    cursor.execute('SELECT id FROM game_announcement WHERE username=%s', (username, ))
+    cursor.execute('SELECT id FROM game_announcement WHERE name=%s', (username, ))
     list_id = cursor.fetchall()
     conn.close()
 
