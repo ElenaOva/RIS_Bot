@@ -1291,12 +1291,13 @@ def finally_add_picture_announcement(message):
                     print(f'picture = {picture}')
                     text = answer[1]
                     print(f'text = {text}')
-                    bot.send_photo(message.chat.id, picture, text, reply_markup=markup)
+                    bot.send_photo(message.chat.id, picture, text)
                     markup.add(types.KeyboardButton('Отправить анонс админу 💃'),
                                types.KeyboardButton('Напишу новый анонс 👀'),
                                types.KeyboardButton('Передумал отправлять анонс 🌚'))
                     bot.send_message(message.chat.id, text='{0.first_name}, ещё раз прочитай и проверь свой '
-                                                           'анонс 😌'.format(message.from_user))
+                                                           'анонс 😌'.format(message.from_user),
+                                     reply_markup=markup)
                     bot.register_next_step_handler(message, finally_send_announcement)
 
         else:
