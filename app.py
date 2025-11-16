@@ -1205,10 +1205,13 @@ def add_picture_announcement_yes_or_no(message):
         if username not in admins:
             if type(message.text) is str:
                 if message.text == '/start':
+                    delete_announcement(username)
                     start(message)
                 elif message.text == '/help_me':
+                    delete_announcement(username)
                     help_me(message)
                 elif message.text == 'Вернуться в главное меню':
+                    delete_announcement(username)
                     markup.add(types.KeyboardButton('Прислать новость 📝'),
                                types.KeyboardButton('Прислать мем 🦄'))
                     bot.send_message(message.chat.id, text="Реши, что хочешь сделать :)", reply_markup=markup)
