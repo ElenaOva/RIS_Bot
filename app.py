@@ -300,15 +300,56 @@ def add_announcement(data, name):
     conn = psycopg2.connect(DATABASE_URL)
     cursor = conn.cursor()
     cursor.execute(
-        f'INSERT INTO game_announcement (announcement, name) VALUES (%s, %s)', (data, name, ))
+        f'INSERT INTO game_announcement (announcement, name, picture) VALUES (%s, %s, %s)',
+        (data, name, '-'))
     conn.commit()
     conn.close()
 
 
-def delete_announcement():
+def add_picture_announcement_in_database(picture, username):
     conn = psycopg2.connect(DATABASE_URL)
     cursor = conn.cursor()
-    cursor.execute('SELECT id FROM game_announcement')
+    cursor.execute('UPDATE game_announcement SET picture=%s WHERE picture=%s AND username=%s',
+                   (picture, '-', username))
+    conn.commit()
+    conn.close()
+
+
+def show_announcement(username):
+    conn = psycopg2.connect(DATABASE_URL)
+    cursor = conn.cursor()
+    cursor.execute('SELECT id FROM game_announcement WHERE username=%s', (username, ))
+    list_id = cursor.fetchall()
+    conn.close()
+
+    list_id = [elem[0] for elem in list_id]
+    list_id.sort()
+    actual_id = list_id[-1]
+
+    conn = psycopg2.connect(DATABASE_URL)
+    cursor = conn.cursor()
+    cursor.execute('SELECT picture FROM game_announcement WHERE id=%s', (actual_id, ))
+    picture = cursor.fetchall()[0][0]
+    print(f'picture = {picture}')
+    conn.close()
+
+    conn = psycopg2.connect(DATABASE_URL)
+    cursor = conn.cursor()
+    cursor.execute('SELECT announcement FROM game_announcement WHERE id=%s', (actual_id,))
+    text = cursor.fetchall()[0][0]
+    print(f'text = {text}')
+    conn.close()
+
+    if picture != '-':
+        return [picture, text]
+    else:
+        return text
+
+
+def delete_announcement(username):
+    conn = psycopg2.connect(DATABASE_URL)
+    cursor = conn.cursor()
+    cursor.execute('SELECT id FROM game_announcement WHERE username=%s', (username, ))
     list_id = cursor.fetchall()
     conn.close()
 
@@ -982,7 +1023,8 @@ def send_news(message):
                                    types.KeyboardButton('Создать анонс по шаблону'),
                                    types.KeyboardButton('Вернуться в главное меню'))
                         bot.send_message(message.chat.id,
-                                         text='Выбери, что хочешь сделать :)'.
+                                         text='Выбери, что хочешь сделать :)\nЗаставку своей игры сможешь добавить '
+                                              'в конце :)'.
                                          format(message.from_user), reply_markup=markup, )
                         bot.register_next_step_handler(message, announcement)
 
@@ -1092,14 +1134,14 @@ def announcement(message):
                         markup.add(types.KeyboardButton('Вернуться в главное меню'))
                         bot.send_message(message.chat.id, text='Напиши в свободной форме анонс своей игры :)'.
                                          format(message.from_user), reply_markup=markup)
-                        bot.register_next_step_handler(message, send_announcement)
+                        bot.register_next_step_handler(message, add_picture_announcement)
                     elif message.text == 'Создать анонс по шаблону':
                         markup.add(types.KeyboardButton('Вернуться в главное меню'))
                         bot.send_message(message.chat.id, text='Скопируй текст и создай анонс своей игры по этому '
                                                                'шаблону и пришли в следующем сообщении :)')
                         bot.send_message(message.chat.id, text='Название:\nКогда:\nГде:\nСколько стоит:\nТекст анонса:',
                                          reply_markup=markup)
-                        bot.register_next_step_handler(message, send_announcement)
+                        bot.register_next_step_handler(message, add_picture_announcement)
                     else:
                         markup.add(types.KeyboardButton('Отправить свой анонс'),
                                    types.KeyboardButton('Создать анонс по шаблону'),
@@ -1122,7 +1164,7 @@ def announcement(message):
             start(message)
 
 
-def send_announcement(message):
+def add_picture_announcement(message):
     if message.chat.type == 'private':
         admins = get_admins()
         username = message.from_user.username
@@ -1140,20 +1182,102 @@ def send_announcement(message):
                     bot.register_next_step_handler(message, user_actions)
                 else:
                     add_announcement(message.text, username)
+                    markup.add(types.KeyboardButton('ДА'), types.KeyboardButton('НЕТ'))
+                    bot.send_message(message.chat.id, text='Добавить заставку к игре?', reply_markup=markup)
+                    bot.register_next_step_handler(message, add_picture_announcement_yes_or_no)
+            else:
+                markup.add(types.KeyboardButton('Вернуться в главное меню'))
+                bot.send_message(message.chat.id,
+                                 text='{0.first_name}, ты что-то не то нажимаешь😌 или шлешь нам картинки вместо '
+                                      'текста анонса 🙃\nНапиши анонс своей игры или вернись в главное '
+                                      'меню :)'.format(message.from_user), reply_markup=markup)
+                bot.register_next_step_handler(message, add_picture_announcement)
+        else:
+            start(message)
+
+
+def add_picture_announcement_yes_or_no(message):
+    if message.chat.type == 'private':
+        admins = get_admins()
+        username = message.from_user.username
+        markup = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
+        if username not in admins:
+            if type(message.text) is str:
+                if message.text == '/start':
+                    start(message)
+                elif message.text == '/help_me':
+                    help_me(message)
+                elif message.text == 'Вернуться в главное меню':
+                    markup.add(types.KeyboardButton('Прислать новость 📝'),
+                               types.KeyboardButton('Прислать мем 🦄'))
+                    bot.send_message(message.chat.id, text="Реши, что хочешь сделать :)", reply_markup=markup)
+                    bot.register_next_step_handler(message, user_actions)
+                else:
+                    if message.text == 'ДА':
+                        bot.send_message(message.chat.id, text='Загрузи заставку к своей игре в виде картинки :)',
+                                         reply_markup=markup)
+                        bot.register_next_step_handler(message, finally_add_picture_announcement)
+                    elif message.text == 'НЕТ':
+                        answer = show_announcement(username)
+                        bot.send_message(message.chat.id, answer, reply_markup=markup)
+                        markup.add(types.KeyboardButton('Отправить анонс админу 💃'),
+                                   types.KeyboardButton('Напишу новый анонс 👀'),
+                                   types.KeyboardButton('Передумал отправлять анонс 🌚'))
+                        bot.send_message(message.chat.id, text='{0.first_name}, ещё раз прочитай и проверь свой '
+                                                               'анонс 😌'.format(message.from_user))
+                        bot.register_next_step_handler(message, finally_send_announcement)
+            else:
+                markup.add(types.KeyboardButton('ДА'), types.KeyboardButton('НЕТ'),
+                           types.KeyboardButton('Вернуться в главное меню'))
+                bot.send_message(message.chat.id,
+                                 text='{0.first_name}, ты что-то не то нажимаешь🙃\nРеши, будешь ли ты добавлять '
+                                      'заставку к игре или нет :)\nИли вернись в главное '
+                                      'меню'.format(message.from_user), reply_markup=markup)
+                bot.register_next_step_handler(message, add_picture_announcement_yes_or_no)
+        else:
+            start(message)
+
+
+def finally_add_picture_announcement(message):
+    if message.chat.type == 'private':
+        admins = get_admins()
+        markup = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
+        username = message.from_user.username
+        if username not in admins:
+            if message.text == '/start':
+                start(message)
+            elif message.text == '/help_me':
+                help_me(message)
+            elif message.text == 'Вернуться в главное меню':
+                markup.add(types.KeyboardButton('Прислать новость 📝'),
+                           types.KeyboardButton('Прислать мем 🦄'))
+                bot.send_message(message.chat.id, text="Привет, {0.first_name}! Реши, что хочешь сделать :)"
+                                 .format(message.from_user), reply_markup=markup)
+                bot.register_next_step_handler(message, user_actions)
+            else:
+                content_type = message.content_type
+                if content_type != 'photo':
+                    markup.add(types.KeyboardButton('Вернуться в главное меню'))
+                    bot.send_message(message.chat.id,
+                                     text='{0.first_name}, ты что-то не то нажимаешь😌 или не отправляешь нам '
+                                          'заставку на игру😐\nЗагрузи заставку (просто картинкой! не файлом!) '
+                                          'или вернись в главное меню :)'.format(message.from_user),
+                                     reply_markup=markup)
+                    bot.register_next_step_handler(message, finally_add_picture_announcement)
+                elif content_type == 'photo':
+                    photo = message.photo[-1]
+                    add_picture_announcement_in_database(photo.file_id, username)
+                    answer = show_announcement(username)
+                    picture = answer[0]
+                    text = answer[1]
+                    bot.send_photo(message.chat.id, picture, text, reply_markup=markup)
                     markup.add(types.KeyboardButton('Отправить анонс админу 💃'),
                                types.KeyboardButton('Напишу новый анонс 👀'),
                                types.KeyboardButton('Передумал отправлять анонс 🌚'))
                     bot.send_message(message.chat.id, text='{0.first_name}, ещё раз прочитай и проверь свой '
                                                            'анонс 😌'.format(message.from_user))
-                    bot.send_message(message.chat.id, text=message.text, reply_markup=markup)
                     bot.register_next_step_handler(message, finally_send_announcement)
-            else:
-                markup.add(types.KeyboardButton('Вернуться в главное меню'))
-                bot.send_message(message.chat.id,
-                                 text='{0.first_name}, ты что-то не то нажимаешь😌 или шлешь нам картинки вместо текста '
-                                      'анонса 🙃\nНапиши анонс своей игры или вернись в главное '
-                                      'меню :)'.format(message.from_user), reply_markup=markup)
-                bot.register_next_step_handler(message, send_announcement)
+
         else:
             start(message)
 
@@ -1166,10 +1290,10 @@ def finally_send_announcement(message):
         if username not in admins:
             if type(message.text) is str:
                 if message.text == '/start':
-                    delete_announcement()
+                    delete_announcement(username)
                     start(message)
                 elif message.text == '/help_me':
-                    delete_announcement()
+                    delete_announcement(username)
                     help_me(message)
                 elif message.text == 'Отправить анонс админу 💃':
                     bot.send_message(message.chat.id, text='Анонс твоей игры отправлен админу :)\nЕсли у админа '
@@ -1180,13 +1304,13 @@ def finally_send_announcement(message):
                                      .format(message.from_user), reply_markup=markup)
                     bot.register_next_step_handler(message, user_actions)
                 elif message.text == 'Напишу новый анонс 👀':
-                    delete_announcement()
+                    delete_announcement(username)
                     markup.add(types.KeyboardButton('Вернуться в главное меню'))
                     bot.send_message(message.chat.id, text='Отправь новый анонс своей игры :)'.
                                      format(message.from_user), reply_markup=markup)
-                    bot.register_next_step_handler(message, send_announcement)
+                    bot.register_next_step_handler(message, add_picture_announcement)
                 elif message.text == 'Передумал отправлять анонс 🌚':
-                    delete_announcement()
+                    delete_announcement(username)
                     markup.add(types.KeyboardButton('Прислать новость 📝'),
                                types.KeyboardButton('Прислать мем 🦄'))
                     bot.send_message(message.chat.id, text="{0.first_name}, реши, что хочешь сделать :)"
@@ -1198,7 +1322,8 @@ def finally_send_announcement(message):
                                types.KeyboardButton('Передумал отправлять анонс 🌚'))
                     bot.send_message(message.chat.id,
                                      text='{0.first_name}, ты что-то не то нажимаешь😌 \nВыбери один из этих вариантов, '
-                                          'что делать с твоим анонсом :)'.format(message.from_user), reply_markup=markup)
+                                          'что делать с твоим анонсом :)'.format(message.from_user),
+                                     reply_markup=markup)
                     bot.register_next_step_handler(message, finally_send_announcement)
             else:
                 markup.add(types.KeyboardButton('Отправить анонс админу 💃'),
