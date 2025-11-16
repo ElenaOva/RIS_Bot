@@ -308,6 +308,7 @@ def add_announcement(data, name):
 
 def add_picture_announcement_in_database(picture, username):
     print('def add_picture_announcement_in_database(picture, username):')
+    print(picture, type(picture))
     conn = psycopg2.connect(DATABASE_URL)
     cursor = conn.cursor()
     cursor.execute('UPDATE game_announcement SET picture=%s WHERE picture=%s AND username=%s',
@@ -1217,8 +1218,9 @@ def add_picture_announcement_yes_or_no(message):
                     bot.send_message(message.chat.id, text="Реши, что хочешь сделать :)", reply_markup=markup)
                     bot.register_next_step_handler(message, user_actions)
                 elif message.text == 'ДА':
-                    bot.send_message(message.chat.id, text='Загрузи заставку к своей игре в виде картинки :)',
-                                     reply_markup=markup)
+                    markup.add(types.KeyboardButton('Вернуться в главное меню'))
+                    bot.send_message(message.chat.id, text='Загрузи заставку к своей игре в виде картинки :)\n'
+                                                           'Или вернись в главное меню :)', reply_markup=markup)
                     bot.register_next_step_handler(message, finally_add_picture_announcement)
                 elif message.text == 'НЕТ':
                     answer = show_announcement(username)
