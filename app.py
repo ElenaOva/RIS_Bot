@@ -1264,6 +1264,7 @@ def finally_add_picture_announcement(message):
                 delete_announcement(username)
                 help_me(message)
             elif message.text == 'Вернуться в главное меню':
+                print('Вернуться в главное меню')
                 delete_announcement(username)
                 markup.add(types.KeyboardButton('Прислать новость 📝'),
                            types.KeyboardButton('Прислать мем 🦄'))
