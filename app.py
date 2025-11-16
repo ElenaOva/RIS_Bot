@@ -72,7 +72,8 @@ def get_announcements(argument):
         conn = psycopg2.connect(DATABASE_URL)
         cursor = conn.cursor()
         cursor.execute(
-            'SELECT game_announcement.name, game_announcement.announcement FROM game_announcement WHERE status IS NULL')
+            'SELECT game_announcement.picture, game_announcement.name, game_announcement.announcement '
+            'FROM game_announcement WHERE status IS NULL')
         announcements_status_none = cursor.fetchall()
         print(f'announcements = {announcements_status_none}, {type(announcements_status_none)}')
         conn.close()
@@ -82,10 +83,14 @@ def get_announcements(argument):
         else:
             result = []
             for text in announcements_status_none:
-                master = text[0]
-                text_announcement = text[1]
+                actual_list = []
+                picture = text[0]
+                master = text[1]
+                text_announcement = text[2]
                 new_text = f'Мастер: @{master}\n{text_announcement}'
-                result.append(new_text)
+                actual_list.append(picture)
+                actual_list.append(new_text)
+                result.append(actual_list)
 
             conn = psycopg2.connect(DATABASE_URL)
             cursor = conn.cursor()
@@ -712,10 +717,22 @@ def view_messages(message, argument):
                             markup.add(types.KeyboardButton('Вернуться в главное меню'))
                             for i in range(len(announcements)):
                                 if i == len(announcements) - 1:
-                                    bot.send_message(message.chat.id, text=announcements[i], reply_markup=markup)
-                                    bot.register_next_step_handler(message, admin_actions)
+                                    picture = announcements[i][0]
+                                    text = announcements[i][1]
+                                    if picture == '-':
+                                        bot.send_message(message.chat.id, text, reply_markup=markup)
+                                        bot.register_next_step_handler(message, admin_actions)
+                                    else:
+                                        bot.send_photo(message.chat.id, picture, text, reply_markup=markup)
+                                        bot.register_next_step_handler(message, admin_actions)
                                 else:
-                                    bot.send_message(message.chat.id, text=announcements[i])
+                                    picture = announcements[i][0]
+                                    text = announcements[i][1]
+                                    if picture == '-':
+                                        bot.send_message(message.chat.id, text)
+                                    else:
+                                        bot.send_photo(message.chat.id, picture, text)
+
                     elif message.text == 'Ролевые истории':
                         stories = get_stories(argument)
                         if type(stories) is str:
