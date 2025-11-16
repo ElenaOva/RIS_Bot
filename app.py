@@ -311,7 +311,7 @@ def add_picture_announcement_in_database(picture, username):
     print(picture, type(picture))
     conn = psycopg2.connect(DATABASE_URL)
     cursor = conn.cursor()
-    cursor.execute('UPDATE game_announcement SET picture=%s WHERE picture=%s AND username=%s',
+    cursor.execute('UPDATE game_announcement SET picture=%s WHERE picture=%s AND name=%s',
                    (picture, '-', username))
     conn.commit()
     conn.close()
