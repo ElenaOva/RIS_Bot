@@ -1224,12 +1224,12 @@ def add_picture_announcement_yes_or_no(message):
                     bot.register_next_step_handler(message, finally_add_picture_announcement)
                 elif message.text == 'НЕТ':
                     answer = show_announcement(username)
-                    bot.send_message(message.chat.id, answer, reply_markup=markup)
                     markup.add(types.KeyboardButton('Отправить анонс админу 💃'),
                                types.KeyboardButton('Напишу новый анонс 👀'),
                                types.KeyboardButton('Передумал отправлять анонс 🌚'))
+                    bot.send_message(message.chat.id, answer)
                     bot.send_message(message.chat.id, text='{0.first_name}, ещё раз прочитай и проверь свой '
-                                                           'анонс 😌'.format(message.from_user))
+                                                           'анонс 😌'.format(message.from_user), reply_markup=markup)
                     bot.register_next_step_handler(message, finally_send_announcement)
                 else:
                     markup.add(types.KeyboardButton('ДА'), types.KeyboardButton('НЕТ'),
