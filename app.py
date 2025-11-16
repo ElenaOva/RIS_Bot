@@ -1286,8 +1286,11 @@ def finally_add_picture_announcement(message):
                     photo = message.photo[-1]
                     add_picture_announcement_in_database(photo.file_id, username)
                     answer = show_announcement(username)
+                    print(f'answer = {answer}')
                     picture = answer[0]
+                    print(f'picture = {picture}')
                     text = answer[1]
+                    print(f'text = {text}')
                     bot.send_photo(message.chat.id, picture, text, reply_markup=markup)
                     markup.add(types.KeyboardButton('Отправить анонс админу 💃'),
                                types.KeyboardButton('Напишу новый анонс 👀'),
